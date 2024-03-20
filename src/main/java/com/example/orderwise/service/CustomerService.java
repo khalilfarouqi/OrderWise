@@ -1,4 +1,4 @@
 package com.example.orderwise.service;
 
-public class DeliveryBoyService {
+public class CustomerService {
 }
