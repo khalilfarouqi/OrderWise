@@ -1,10 +1,18 @@
 package com.example.orderwise.entity;
 
 import com.example.orderwise.entity.enums.*;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Entity
 public class User {
+    @Id
+    @GeneratedValue
     private Long id;
     private Date lastCheckIn;
     private String firstname;
@@ -14,9 +22,13 @@ public class User {
     private String password;
     private String cin;
     private String tel;
-    private City city;
-    private Gender gender;
     private String image;
+    @Enumerated(EnumType.STRING)
+    private City city;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 }
