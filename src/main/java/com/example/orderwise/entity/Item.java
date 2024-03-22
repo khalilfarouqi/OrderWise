@@ -17,4 +17,6 @@ public class Item {
     private int qty;
     @OneToOne
     private Product products;
+    @ManyToOne
+    private Cart cart;
 }
