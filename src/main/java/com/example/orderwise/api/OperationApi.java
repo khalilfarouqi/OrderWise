@@ -1,4 +1,4 @@
 package com.example.orderwise.api;
 
-public interface OpérationApi {
+public interface OperationApi {
 }
