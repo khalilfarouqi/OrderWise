@@ -1,6 +1,6 @@
 package com.example.orderwise.rest.api;
 
-import com.example.orderwise.common.dto.OrderDto;
+import com.example.orderwise.common.dto.ItemDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -8,21 +8,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
-@Tag(name = "Order", description = "REST API for Order information")
-@RequestMapping("/v1/order")
-public interface OrderApi {
+@Tag(name = "Item", description = "REST API for Item information")
+@RequestMapping("/v1/item")
+public interface ItemApi {
     @PostMapping
-    OrderDto save(@RequestBody OrderDto order);
+    ItemDto save(@RequestBody ItemDto item);
     @PutMapping
-    OrderDto update(@RequestBody OrderDto order);
+    ItemDto update(@RequestBody ItemDto item);
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id);
     @GetMapping(value = "/{id}")
-    OrderDto getOrderById(@PathVariable("id") Long id);
+    ItemDto getItemById(@PathVariable("id") Long id);
     @GetMapping(value = "/getAll")
-    List<OrderDto> getAllOrder();
+    List<ItemDto> getAllItem();
     @GetMapping(value = "/search")
-    Page<OrderDto> search(@RequestParam(defaultValue = "id>0") String query,
+    Page<ItemDto> search(@RequestParam(defaultValue = "id>0") String query,
                         @RequestParam(defaultValue = "0") Integer page,
                         @RequestParam(defaultValue = "10") Integer size,
                         @RequestParam(defaultValue = "asc") String order,
