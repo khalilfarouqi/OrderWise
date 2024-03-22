@@ -1,10 +1,10 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
-import com.example.orderwise.common.dto.OrderDto;
-import com.example.orderwise.entity.Order;
-import com.example.orderwise.repository.OperationRepository;
-import com.example.orderwise.repository.OrderRepository;
+import com.example.orderwise.common.dto.ItemDto;
+import com.example.orderwise.entity.Item;
+import com.example.orderwise.repository.CustomerRepository;
+import com.example.orderwise.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -18,16 +18,16 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class OrderService implements IBaseService<Order, OrderDto> {
-    private final OrderRepository orderRepository;
+public class ItemService implements IBaseService<Item, ItemDto> {
+    private final ItemRepository itemRepository;
     private ModelMapper modelMapper;
     @Override
-    public OrderDto save(OrderDto dto) throws Exception {
+    public ItemDto save(ItemDto dto) throws Exception {
         return null;
     }
 
     @Override
-    public OrderDto update(OrderDto dto) {
+    public ItemDto update(ItemDto dto) {
         return null;
     }
 
@@ -37,17 +37,17 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     }
 
     @Override
-    public OrderDto findById(Long id) {
+    public ItemDto findById(Long id) {
         return null;
     }
 
     @Override
-    public List<OrderDto> findAll() {
+    public List<ItemDto> findAll() {
         return null;
     }
 
     @Override
-    public Page<OrderDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
+    public Page<ItemDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
     }
 }

@@ -1,4 +1,52 @@
 package com.example.orderwise.service;
 
-public class WalletService {
+import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.common.dto.WalletDto;
+import com.example.orderwise.entity.Wallet;
+import com.example.orderwise.repository.WalletRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Slf4j
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Service
+public class WalletService implements IBaseService<Wallet, WalletDto> {
+    private final WalletRepository walletRepository;
+    private ModelMapper modelMapper;
+    @Override
+    public WalletDto save(WalletDto dto) throws Exception {
+        return null;
+    }
+
+    @Override
+    public WalletDto update(WalletDto dto) {
+        return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+
+    }
+
+    @Override
+    public WalletDto findById(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<WalletDto> findAll() {
+        return null;
+    }
+
+    @Override
+    public Page<WalletDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
+        return null;
+    }
 }
