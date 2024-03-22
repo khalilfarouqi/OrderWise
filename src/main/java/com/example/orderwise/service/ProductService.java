@@ -21,7 +21,7 @@ public class ProductService implements IBaseService<Product, ProductDto> {
     private final ProductRepository productRepository;
     private ModelMapper modelMapper;
     @Override
-    public ProductDto save(ProductDto dto) throws Exception {
+    public ProductDto save(ProductDto dto) {
         return modelMapper.map(productRepository.save(modelMapper.map(dto, Product.class)), ProductDto.class);
     }
 

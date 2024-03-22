@@ -21,7 +21,7 @@ public class OperationService implements IBaseService<Operation, OperationDto> {
     private final OperationRepository operationRepository;
     private ModelMapper modelMapper;
     @Override
-    public OperationDto save(OperationDto dto) throws Exception {
+    public OperationDto save(OperationDto dto) {
         return modelMapper.map(operationRepository.save(modelMapper.map(dto, Operation.class)), OperationDto.class);
     }
 

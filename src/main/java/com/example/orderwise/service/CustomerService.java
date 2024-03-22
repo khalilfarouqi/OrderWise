@@ -29,7 +29,7 @@ public class CustomerService implements IBaseService<Customer, CustomerDto> {
     private final CustomerRepository customerRepository;
     private ModelMapper modelMapper;
     @Override
-    public CustomerDto save(CustomerDto dto) throws Exception {
+    public CustomerDto save(CustomerDto dto) {
         return modelMapper.map(customerRepository.save(modelMapper.map(dto, Customer.class)), CustomerDto.class);
     }
 

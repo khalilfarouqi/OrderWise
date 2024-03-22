@@ -21,7 +21,7 @@ public class OrderAssignmentService implements IBaseService<OrderAssignment, Ord
     private final OrderAssignmentRepository orderAssignmentRepository;
     private ModelMapper modelMapper;
     @Override
-    public OrderAssignmentDto save(OrderAssignmentDto dto) throws Exception {
+    public OrderAssignmentDto save(OrderAssignmentDto dto) {
         return modelMapper.map(orderAssignmentRepository.save(modelMapper.map(dto, OrderAssignment.class)), OrderAssignmentDto.class);
     }
 

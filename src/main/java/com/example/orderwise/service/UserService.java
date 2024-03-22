@@ -21,7 +21,7 @@ public class UserService implements IBaseService<User, UserDto> {
     private final UserRepository userRepository;
     private ModelMapper modelMapper;
     @Override
-    public UserDto save(UserDto dto) throws Exception {
+    public UserDto save(UserDto dto) {
         return modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
     }
 

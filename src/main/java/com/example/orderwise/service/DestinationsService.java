@@ -21,7 +21,7 @@ public class DestinationsService implements IBaseService<Destinations, Destinati
     private final DestinationsRepository destinationsRepository;
     private ModelMapper modelMapper;
     @Override
-    public DestinationsDto save(DestinationsDto dto) throws Exception {
+    public DestinationsDto save(DestinationsDto dto) {
         return modelMapper.map(destinationsRepository.save(modelMapper.map(dto, Destinations.class)), DestinationsDto.class);
     }
 

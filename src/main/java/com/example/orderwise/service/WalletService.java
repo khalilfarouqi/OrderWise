@@ -21,7 +21,7 @@ public class WalletService implements IBaseService<Wallet, WalletDto> {
     private final WalletRepository walletRepository;
     private ModelMapper modelMapper;
     @Override
-    public WalletDto save(WalletDto dto) throws Exception {
+    public WalletDto save(WalletDto dto) {
         return modelMapper.map(walletRepository.save(modelMapper.map(dto, Wallet.class)), WalletDto.class);
     }
 

@@ -21,7 +21,7 @@ public class StockService implements IBaseService<Stock, StockDto> {
     private final StockRepository stockRepository;
     private ModelMapper modelMapper;
     @Override
-    public StockDto save(StockDto dto) throws Exception {
+    public StockDto save(StockDto dto) {
         return modelMapper.map(stockRepository.save(modelMapper.map(dto, Stock.class)), StockDto.class);
     }
 
