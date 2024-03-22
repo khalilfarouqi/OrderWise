@@ -3,7 +3,7 @@ package com.example.orderwise.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,13 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
-public class Wallet {
+public class Item {
     @Id
     @GeneratedValue
     private Long id;
-    private double sold;
-    @ManyToOne
-    private User user;
-    @ManyToOne
-    private User seller;
+    private int qty;
+    @OneToOne
+    private Product products;
 }

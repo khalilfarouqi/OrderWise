@@ -12,14 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-public class Product {
+public class Cart {
     @Id
     @GeneratedValue
     private Long id;
-    private String productNom;
-    private Double purchasePrice;
-    private Double sellingPrice;
-    private Double weight;
-    @ManyToOne
-    private User seller;
+    private double itemsPrice;
+    @OneToOne
+    private Customer customers;
+    @OneToMany
+    private List<Item> items;
 }
