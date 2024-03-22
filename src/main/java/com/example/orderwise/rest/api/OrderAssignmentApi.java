@@ -1,4 +1,4 @@
-package com.example.orderwise.api;
+package com.example.orderwise.rest.api;
 
 public interface OrderAssignmentApi {
 }
