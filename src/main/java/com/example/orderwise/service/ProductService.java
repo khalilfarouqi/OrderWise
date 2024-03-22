@@ -22,27 +22,30 @@ public class ProductService implements IBaseService<Product, ProductDto> {
     private ModelMapper modelMapper;
     @Override
     public ProductDto save(ProductDto dto) throws Exception {
-        return null;
+        return modelMapper.map(productRepository.save(modelMapper.map(dto, Product.class)), ProductDto.class);
     }
 
     @Override
     public ProductDto update(ProductDto dto) {
-        return null;
+        return modelMapper.map(productRepository.save(modelMapper.map(dto, Product.class)), ProductDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        productRepository.deleteById(id);
     }
 
     @Override
     public ProductDto findById(Long id) {
-        return null;
+        return modelMapper.map(productRepository.findById(id), ProductDto.class);
     }
 
     @Override
     public List<ProductDto> findAll() {
-        return null;
+        return productRepository.findAll()
+                .stream()
+                .map(product -> modelMapper.map(product, ProductDto.class))
+                .toList();
     }
 
     @Override

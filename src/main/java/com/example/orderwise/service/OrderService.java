@@ -3,7 +3,6 @@ package com.example.orderwise.service;
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.Order;
-import com.example.orderwise.repository.OperationRepository;
 import com.example.orderwise.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,27 +22,30 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     private ModelMapper modelMapper;
     @Override
     public OrderDto save(OrderDto dto) throws Exception {
-        return null;
+        return modelMapper.map(orderRepository.save(modelMapper.map(dto, Order.class)), OrderDto.class);
     }
 
     @Override
     public OrderDto update(OrderDto dto) {
-        return null;
+        return modelMapper.map(orderRepository.save(modelMapper.map(dto, Order.class)), OrderDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        orderRepository.deleteById(id);
     }
 
     @Override
     public OrderDto findById(Long id) {
-        return null;
+        return modelMapper.map(orderRepository.findById(id), OrderDto.class);
     }
 
     @Override
     public List<OrderDto> findAll() {
-        return null;
+        return orderRepository.findAll()
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
     }
 
     @Override

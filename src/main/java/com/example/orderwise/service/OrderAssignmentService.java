@@ -22,17 +22,17 @@ public class OrderAssignmentService implements IBaseService<OrderAssignment, Ord
     private ModelMapper modelMapper;
     @Override
     public OrderAssignmentDto save(OrderAssignmentDto dto) throws Exception {
-        return null;
+        return modelMapper.map(orderAssignmentRepository.save(modelMapper.map(dto, OrderAssignment.class)), OrderAssignmentDto.class);
     }
 
     @Override
     public OrderAssignmentDto update(OrderAssignmentDto dto) {
-        return null;
+        return modelMapper.map(orderAssignmentRepository.save(modelMapper.map(dto, OrderAssignment.class)), OrderAssignmentDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        orderAssignmentRepository.deleteById(id);
     }
 
     @Override
@@ -42,7 +42,10 @@ public class OrderAssignmentService implements IBaseService<OrderAssignment, Ord
 
     @Override
     public List<OrderAssignmentDto> findAll() {
-        return null;
+        return orderAssignmentRepository.findAll()
+                .stream()
+                .map(orderAssignment -> modelMapper.map(orderAssignment, OrderAssignmentDto.class))
+                .toList();
     }
 
     @Override

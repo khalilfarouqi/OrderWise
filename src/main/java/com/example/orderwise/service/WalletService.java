@@ -22,27 +22,30 @@ public class WalletService implements IBaseService<Wallet, WalletDto> {
     private ModelMapper modelMapper;
     @Override
     public WalletDto save(WalletDto dto) throws Exception {
-        return null;
+        return modelMapper.map(walletRepository.save(modelMapper.map(dto, Wallet.class)), WalletDto.class);
     }
 
     @Override
     public WalletDto update(WalletDto dto) {
-        return null;
+        return modelMapper.map(walletRepository.save(modelMapper.map(dto, Wallet.class)), WalletDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        walletRepository.deleteById(id);
     }
 
     @Override
     public WalletDto findById(Long id) {
-        return null;
+        return modelMapper.map(walletRepository.findById(id), WalletDto.class);
     }
 
     @Override
     public List<WalletDto> findAll() {
-        return null;
+        return walletRepository.findAll()
+                .stream()
+                .map(wallet -> modelMapper.map(wallet, WalletDto.class))
+                .toList();
     }
 
     @Override

@@ -22,27 +22,30 @@ public class StockService implements IBaseService<Stock, StockDto> {
     private ModelMapper modelMapper;
     @Override
     public StockDto save(StockDto dto) throws Exception {
-        return null;
+        return modelMapper.map(stockRepository.save(modelMapper.map(dto, Stock.class)), StockDto.class);
     }
 
     @Override
     public StockDto update(StockDto dto) {
-        return null;
+        return modelMapper.map(stockRepository.save(modelMapper.map(dto, Stock.class)), StockDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        stockRepository.deleteById(id);
     }
 
     @Override
     public StockDto findById(Long id) {
-        return null;
+        return modelMapper.map(stockRepository.findById(id), StockDto.class);
     }
 
     @Override
     public List<StockDto> findAll() {
-        return null;
+        return stockRepository.findAll()
+                .stream()
+                .map(stock -> modelMapper.map(stock, StockDto.class))
+                .toList();
     }
 
     @Override

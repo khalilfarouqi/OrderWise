@@ -6,6 +6,7 @@ import com.example.orderwise.entity.Cart;
 import com.example.orderwise.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,29 +19,32 @@ import java.util.List;
 @Service
 public class CartService implements IBaseService<Cart, CartDto> {
     private final CartRepository cartRepository;
+    private ModelMapper modelMapper;
     @Override
     public CartDto save(CartDto dto) throws Exception {
-        return null;
+        return modelMapper.map(cartRepository.save(modelMapper.map(dto, Cart.class)), CartDto.class);
     }
 
     @Override
     public CartDto update(CartDto dto) {
-        return null;
+        return modelMapper.map(cartRepository.save(modelMapper.map(dto, Cart.class)), CartDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        cartRepository.deleteById(id);
     }
 
     @Override
     public CartDto findById(Long id) {
-        return null;
+        return modelMapper.map(cartRepository.findById(id), CartDto.class);
     }
 
     @Override
     public List<CartDto> findAll() {
-        return null;
+        return cartRepository.findAll().stream()
+                .map(cart -> modelMapper.map(cart, CartDto.class))
+                .toList();
     }
 
     @Override

@@ -1,9 +1,7 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
-import com.example.orderwise.common.dto.CustomerDto;
 import com.example.orderwise.common.dto.DestinationsDto;
-import com.example.orderwise.entity.Customer;
 import com.example.orderwise.entity.Destinations;
 import com.example.orderwise.repository.DestinationsRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,27 +22,30 @@ public class DestinationsService implements IBaseService<Destinations, Destinati
     private ModelMapper modelMapper;
     @Override
     public DestinationsDto save(DestinationsDto dto) throws Exception {
-        return null;
+        return modelMapper.map(destinationsRepository.save(modelMapper.map(dto, Destinations.class)), DestinationsDto.class);
     }
 
     @Override
     public DestinationsDto update(DestinationsDto dto) {
-        return null;
+        return modelMapper.map(destinationsRepository.save(modelMapper.map(dto, Destinations.class)),DestinationsDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        destinationsRepository.deleteById(id);
     }
 
     @Override
     public DestinationsDto findById(Long id) {
-        return null;
+        return modelMapper.map(destinationsRepository.findById(id), DestinationsDto.class);
     }
 
     @Override
     public List<DestinationsDto> findAll() {
-        return null;
+        return destinationsRepository.findAll()
+                .stream()
+                .map(destinations -> modelMapper.map(destinations, DestinationsDto.class))
+                .toList();
     }
 
     @Override

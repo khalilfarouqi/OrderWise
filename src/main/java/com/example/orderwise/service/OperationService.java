@@ -7,7 +7,6 @@ import com.example.orderwise.repository.OperationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,31 +18,34 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class OperationService implements IBaseService<Operation, OperationDto> {
-    private final OperationRepository carRepository;
+    private final OperationRepository operationRepository;
     private ModelMapper modelMapper;
     @Override
     public OperationDto save(OperationDto dto) throws Exception {
-        return null;
+        return modelMapper.map(operationRepository.save(modelMapper.map(dto, Operation.class)), OperationDto.class);
     }
 
     @Override
     public OperationDto update(OperationDto dto) {
-        return null;
+        return modelMapper.map(operationRepository.save(modelMapper.map(dto, Operation.class)), OperationDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        operationRepository.deleteById(id);
     }
 
     @Override
     public OperationDto findById(Long id) {
-        return null;
+        return modelMapper.map(operationRepository.findById(id), OperationDto.class);
     }
 
     @Override
     public List<OperationDto> findAll() {
-        return null;
+        return operationRepository.findAll()
+                .stream()
+                .map(operation -> modelMapper.map(operation, OperationDto.class))
+                .toList();
     }
 
     @Override
