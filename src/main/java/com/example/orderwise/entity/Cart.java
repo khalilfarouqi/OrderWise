@@ -19,7 +19,7 @@ public class Cart {
     private Long id;
     private double itemsPrice;
     @OneToOne
-    private Customer customers;
+    private Customer customer;
     @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Item> items;
