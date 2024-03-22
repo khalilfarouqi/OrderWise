@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="Orders")
 public class Order {
     @Id
     @GeneratedValue

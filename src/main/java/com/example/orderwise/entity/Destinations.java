@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="Destinations")
 public class Destinations {
     @Id
     @GeneratedValue

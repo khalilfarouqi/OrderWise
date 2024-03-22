@@ -10,6 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="Operations")
 public class Operation {
     @Id
     @GeneratedValue

@@ -10,6 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="Users")
 public class User {
     @Id
     @GeneratedValue

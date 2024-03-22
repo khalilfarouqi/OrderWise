@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="Carts")
 public class Cart {
     @Id
     @GeneratedValue

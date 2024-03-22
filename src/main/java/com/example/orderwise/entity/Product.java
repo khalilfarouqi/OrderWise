@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="Products")
 public class Product {
     @Id
     @GeneratedValue

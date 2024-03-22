@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="Customers")
 public class Customer {
     @Id
     @GeneratedValue
