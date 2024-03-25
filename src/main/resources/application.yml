@@ -15,3 +15,9 @@ spring:
       hibernate:
         #        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+
+keycloak:
+  public-client: true
+  realm: OrderWise
+  resource: back-end
+  auth-server-url: http://localhost:8080/auth
