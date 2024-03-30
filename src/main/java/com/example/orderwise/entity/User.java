@@ -35,7 +35,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     @JsonIgnore
-    private List<User> users;
+    private List<Notification> notifications;
 }
