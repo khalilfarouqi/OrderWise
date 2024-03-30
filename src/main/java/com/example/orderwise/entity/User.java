@@ -1,10 +1,12 @@
 package com.example.orderwise.entity;
 
 import com.example.orderwise.entity.enums.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,4 +34,8 @@ public class User {
     private Role role;
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<User> users;
 }
