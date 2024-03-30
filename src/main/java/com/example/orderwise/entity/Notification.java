@@ -23,7 +23,7 @@ public class Notification {
     private Boolean notificationWeb;
 
     @ManyToOne
-    private User user;
+    private User userId;
 
     @OneToOne
     @JoinColumn(name = "notification_group_id")
