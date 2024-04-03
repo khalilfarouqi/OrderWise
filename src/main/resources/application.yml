@@ -17,9 +17,12 @@ spring:
         format_sql: true
 server:
   port: 8081
-
 keycloak:
   public-client: true
   realm: OrderWise
-  resource: back-end
+  resource: OrderWise-BackEnd
   auth-server-url: http://localhost:8080/auth
+  client-id: OrderWise-BackEnd
+  client-secret: sXGxXrbErZdWTIdQbT8R9qTeiiR7r5wi
+  username: admin
+  password: admin
