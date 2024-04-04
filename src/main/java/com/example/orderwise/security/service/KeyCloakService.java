@@ -1,7 +1,7 @@
 package com.example.orderwise.security.service;
 
 import com.example.orderwise.common.dto.UserDto;
-import com.example.orderwise.security.config.Credentials;
+import com.example.orderwise.security.config.*;
 import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -15,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class KeyCloakService {
+
+    KeycloakConfig keycloakConfig;
     public void addUser(UserDto userDTO){
         CredentialRepresentation credential = Credentials.createPasswordCredentials(userDTO.getPassword());
         UserRepresentation user = new UserRepresentation();
@@ -25,12 +27,12 @@ public class KeyCloakService {
         user.setCredentials(Collections.singletonList(credential));
         user.setEnabled(true);
 
-        UsersResource instance = getInstance();
+        UsersResource instance = (UsersResource) keycloakConfig.getInstance();
         instance.create(user);
     }
 
     public List<UserRepresentation> getUser(String userName){
-        UsersResource usersResource = getInstance();
+        UsersResource usersResource = (UsersResource) keycloakConfig.getInstance();
         return usersResource.search(userName, true);
 
     }
@@ -44,11 +46,11 @@ public class KeyCloakService {
         user.setEmail(userDTO.getEmail());
         user.setCredentials(Collections.singletonList(credential));
 
-        UsersResource usersResource = getInstance();
+        UsersResource usersResource = (UsersResource) keycloakConfig.getInstance();
         usersResource.get(userId).update(user);
     }
     public void deleteUser(String userId){
-        UsersResource usersResource = getInstance();
+        UsersResource usersResource = (UsersResource) keycloakConfig.getInstance();
         usersResource.get(userId).remove();
     }
 }

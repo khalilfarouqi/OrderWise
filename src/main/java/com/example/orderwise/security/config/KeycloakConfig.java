@@ -11,31 +11,25 @@ import org.springframework.context.annotation.Configuration;
 public class KeycloakConfig {
     static Keycloak keycloak = null;
 
-    private static final AppProperties appProperties = null;
+    private final AppProperties appProperties;
 
-    private static final String serverUrl = appProperties.getAuthServerUrl();
-    public static final String realm = appProperties.getRealm();
-    private static final String clientId = appProperties.getClientId();
-    private static final String clientSecret = appProperties.getClientSecret();
-    private static final String userName = appProperties.getUsername();
-    private static final String password = appProperties.getPassword();
-
-    public KeycloakConfig() {
+    public KeycloakConfig(AppProperties appProperties) {
+        this.appProperties = appProperties;
     }
 
-    public static Keycloak getInstance(){
+    public Keycloak getInstance(){
         if (keycloak == null) {
             ResteasyClientBuilder clientBuilder = (ResteasyClientBuilder) ResteasyClientBuilder.newBuilder();
             ResteasyClient client = clientBuilder.connectionPoolSize(10).build();
 
             keycloak = KeycloakBuilder.builder()
-                    .serverUrl(serverUrl)
-                    .realm(realm)
+                    .serverUrl(appProperties.getAuthServerUrl())
+                    .realm(appProperties.getRealm())
                     .grantType(OAuth2Constants.PASSWORD)
-                    .username(userName)
-                    .password(password)
-                    .clientId(clientId)
-                    .clientSecret(clientSecret)
+                    .username(appProperties.getUsername())
+                    .password(appProperties.getPassword())
+                    .clientId(appProperties.getClientId())
+                    .clientSecret(appProperties.getClientSecret())
                     .resteasyClient(client)
                     .build();
         }
