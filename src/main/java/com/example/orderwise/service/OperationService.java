@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class OperationService implements IBaseService<Operation, OperationDto> {
     private final OperationRepository operationRepository;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     @Override
     public OperationDto save(OperationDto dto) {
         return modelMapper.map(operationRepository.save(modelMapper.map(dto, Operation.class)), OperationDto.class);

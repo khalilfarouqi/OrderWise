@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class StockService implements IBaseService<Stock, StockDto> {
     private final StockRepository stockRepository;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     @Override
     public StockDto save(StockDto dto) {
         return modelMapper.map(stockRepository.save(modelMapper.map(dto, Stock.class)), StockDto.class);

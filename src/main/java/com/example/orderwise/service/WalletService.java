@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class WalletService implements IBaseService<Wallet, WalletDto> {
     private final WalletRepository walletRepository;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     @Override
     public WalletDto save(WalletDto dto) {
         return modelMapper.map(walletRepository.save(modelMapper.map(dto, Wallet.class)), WalletDto.class);

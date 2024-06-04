@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class CartService implements IBaseService<Cart, CartDto> {
     private final CartRepository cartRepository;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     @Override
     public CartDto save(CartDto dto) {
         return modelMapper.map(cartRepository.save(modelMapper.map(dto, Cart.class)), CartDto.class);

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerService implements IBaseService<Customer, CustomerDto> {
     private final CustomerRepository customerRepository;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     @Override
     public CustomerDto save(CustomerDto dto) {
         return modelMapper.map(customerRepository.save(modelMapper.map(dto, Customer.class)), CustomerDto.class);

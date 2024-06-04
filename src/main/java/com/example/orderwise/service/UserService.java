@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class UserService implements IBaseService<User, UserDto> {
     private final UserRepository userRepository;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
     @Override
     public UserDto save(UserDto dto) {
         return modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
