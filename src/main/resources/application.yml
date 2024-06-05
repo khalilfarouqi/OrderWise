@@ -17,3 +17,7 @@ spring:
         format_sql: true
 server:
   port: 8081
+
+app:
+  mail:
+    from: bio.khalil.f@gmail.com

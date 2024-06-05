@@ -1,8 +1,10 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.common.config.JsonProperties;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.User;
+import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.repository.UserRepository;
 import com.example.orderwise.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ import java.util.List;
 public class UserService implements IBaseService<User, UserDto> {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final JsonProperties jsonProperties;
+    private final MailService mailService;
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -37,6 +41,11 @@ public class UserService implements IBaseService<User, UserDto> {
                 .ifPresent(a ->{
                     throw new BusinessException(String.format("User with the same Email [%s] exist", dto.getEmail()));
                 });
+        try {
+            mailService.sendLoginPasswordMail(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), dto);
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
         dto.setPassword(encoder.encode(dto.getPassword()));
         return modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
     }
