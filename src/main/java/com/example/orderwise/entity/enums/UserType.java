@@ -4,5 +4,6 @@ public enum UserType {
     ADMIN,
     SELLER,
     DELIVERY_BOY,
-    CONFIRMATION
+    CONFIRMATION,
+    NEW_USER
 }
