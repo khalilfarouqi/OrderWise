@@ -4,12 +4,15 @@ import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.User;
 import com.example.orderwise.repository.UserRepository;
+import com.example.orderwise.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -20,13 +23,27 @@ import java.util.List;
 public class UserService implements IBaseService<User, UserDto> {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     @Override
+    @Transactional
     public UserDto save(UserDto dto) {
+        userRepository.findByUsername(dto.getUsername())
+                .ifPresent(a ->{
+                    throw new BusinessException(String.format("User with the same username [%s] exist", dto.getUsername()));
+                });
+        userRepository.findByEmail(dto.getEmail())
+                .ifPresent(a ->{
+                    throw new BusinessException(String.format("User with the same Email [%s] exist", dto.getEmail()));
+                });
+        dto.setPassword(encoder.encode(dto.getPassword()));
         return modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
     }
 
     @Override
     public UserDto update(UserDto dto) {
+        dto.setPassword(encoder.encode(dto.getPassword()));
         return modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
     }
 
