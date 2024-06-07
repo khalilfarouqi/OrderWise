@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class ProductDto implements Serializable {
     private Long id;
     private String productNom;
+    private String description;
     private Double purchasePrice;
     private Double sellingPrice;
     private Double weight;

@@ -18,6 +18,7 @@ public class Product {
     @GeneratedValue
     private Long id;
     private String productNom;
+    private String description;
     private Double purchasePrice;
     private Double sellingPrice;
     private Double weight;
