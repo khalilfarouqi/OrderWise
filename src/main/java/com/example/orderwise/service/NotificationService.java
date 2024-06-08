@@ -1,10 +1,13 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.common.dto.CustomerDto;
 import com.example.orderwise.common.dto.NotificationDto;
 import com.example.orderwise.entity.Notification;
+import com.example.orderwise.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class NotificationService implements IBaseService<Notification, NotificationDto> {
+    private final NotificationRepository notificationRepository;
+    private final ModelMapper modelMapper;
     @Override
     public NotificationDto save(NotificationDto dto) {
         return null;
@@ -38,7 +43,9 @@ public class NotificationService implements IBaseService<Notification, Notificat
 
     @Override
     public List<NotificationDto> findAll() {
-        return List.of();
+        return notificationRepository.findAll().stream()
+                .map(notification -> modelMapper.map(notification, NotificationDto.class))
+                .toList();
     }
 
     @Override
