@@ -66,6 +66,10 @@ public class UserService implements IBaseService<User, UserDto> {
         return modelMapper.map(userRepository.findById(id), UserDto.class);
     }
 
+    public UserDto findByUsername(String username) {
+        return modelMapper.map(userRepository.findByUsername(username), UserDto.class);
+    }
+
     @Override
     public List<UserDto> findAll() {
         return userRepository.findAll()

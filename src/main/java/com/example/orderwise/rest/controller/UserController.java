@@ -36,6 +36,11 @@ public class UserController implements UserApi {
     }
 
     @Override
+    public UserDto findByUsername(String username) {
+        return userService.findByUsername(username);
+    }
+
+    @Override
     public List<UserDto> getAllUser() {
         return userService.findAll();
     }

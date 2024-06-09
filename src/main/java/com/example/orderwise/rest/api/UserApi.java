@@ -19,6 +19,8 @@ public interface UserApi {
     void delete(@PathVariable Long id);
     @GetMapping(value = "/{id}")
     UserDto getUserById(@PathVariable("id") Long id);
+    @GetMapping(value = "/profile/{username}")
+    UserDto findByUsername(@PathVariable("username") String username);
     @GetMapping(value = "/getAll")
     List<UserDto> getAllUser();
     @GetMapping(value = "/search")
