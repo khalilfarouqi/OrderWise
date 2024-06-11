@@ -47,7 +47,10 @@ public class ContactUsService implements IBaseService<ContactUs, ContactUsDto> {
 
     @Override
     public List<ContactUsDto> findAll() {
-        return List.of();
+        return contactUsRepository.findAll()
+                .stream()
+                .map(contactUs -> modelMapper.map(contactUs, ContactUsDto.class))
+                .toList();
     }
 
     @Override
