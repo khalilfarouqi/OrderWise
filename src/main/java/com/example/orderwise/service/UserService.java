@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -63,11 +64,21 @@ public class UserService implements IBaseService<User, UserDto> {
 
     @Override
     public UserDto findById(Long id) {
-        return modelMapper.map(userRepository.findById(id), UserDto.class);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return modelMapper.map(user.get(), UserDto.class);
+        } else {
+            throw new BusinessException(String.format("User with id [%s] does not exist", id));
+        }
     }
 
     public UserDto findByUsername(String username) {
-        return modelMapper.map(userRepository.findByUsername(username), UserDto.class);
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return modelMapper.map(user.get(), UserDto.class);
+        } else {
+            throw new BusinessException(String.format("User with the same username [%s] does not exist", username));
+        }
     }
 
     @Override
