@@ -4,12 +4,14 @@ import com.example.orderwise.entity.enums.City;
 import com.example.orderwise.entity.enums.Gender;
 import com.example.orderwise.entity.enums.Role;
 import com.example.orderwise.entity.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,4 +31,7 @@ public class UserDto implements Serializable {
     private Gender gender;
     private Role role;
     private UserType userType;
+
+    @JsonIgnore
+    private List<NotificationDto> notificationDtos;
 }
