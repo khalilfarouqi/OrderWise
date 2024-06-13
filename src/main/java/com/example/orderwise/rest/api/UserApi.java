@@ -3,9 +3,12 @@ package com.example.orderwise.rest.api;
 import com.example.orderwise.common.dto.UserDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @Tag(name = "User", description = "REST API for User information")
@@ -29,4 +32,6 @@ public interface UserApi {
                         @RequestParam(defaultValue = "10") Integer size,
                         @RequestParam(defaultValue = "asc") String order,
                         @RequestParam(defaultValue = "id") String sort);
+    @PostMapping("/profile-image")
+    ResponseEntity<Map<String, String>> uploadProfileImage(@RequestParam("file") MultipartFile file);
 }

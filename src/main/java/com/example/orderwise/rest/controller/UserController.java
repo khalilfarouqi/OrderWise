@@ -6,15 +6,19 @@ import com.example.orderwise.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 public class UserController implements UserApi {
     private final UserService userService;
+
     @Override
     public UserDto save(UserDto user) {
         return userService.save(user);
@@ -48,5 +52,9 @@ public class UserController implements UserApi {
     @Override
     public Page<UserDto> search(String query, Integer page, Integer size, String order, String sort) {
         return userService.rsqlQuery(query, page, size, order, sort);
+    }
+
+    public ResponseEntity<Map<String, String>> uploadProfileImage(MultipartFile file) {
+        return userService.uploadProfileImage(file);
     }
 }

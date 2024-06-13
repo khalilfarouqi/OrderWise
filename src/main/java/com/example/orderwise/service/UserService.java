@@ -10,13 +10,21 @@ import com.example.orderwise.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -28,6 +36,10 @@ public class UserService implements IBaseService<User, UserDto> {
     private final ModelMapper modelMapper;
     private final JsonProperties jsonProperties;
     private final MailService mailService;
+    public static int counter = 1;
+
+    @Value("${upload.dir}")
+    private String uploadDir;
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -52,9 +64,41 @@ public class UserService implements IBaseService<User, UserDto> {
     }
 
     @Override
+    @Transactional
     public UserDto update(UserDto dto) {
-        dto.setPassword(encoder.encode(dto.getPassword()));
-        return modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
+        Optional<User> user = userRepository.findByUsername(dto.getUsername());
+        if (user.isPresent()) {
+            user.get().setImage(dto.getImage());
+            return modelMapper.map(userRepository.save(modelMapper.map(user.get(), User.class)), UserDto.class);
+        } else {
+            throw new BusinessException(String.format("User not found [%s]", dto.getUsername()));
+        }
+    }
+
+    public ResponseEntity<Map<String, String>> uploadProfileImage(MultipartFile file) {
+        try {
+            File uploadDirFile = new File(uploadDir);
+            if (!uploadDirFile.exists()) {
+                uploadDirFile.mkdirs();
+            }
+
+            String filePath = uploadDir + "image" + counter + ".jpg";
+            File uploadedFile = new File(filePath);
+            file.transferTo(uploadedFile);
+
+            // Assuming you store the image URL in the database associated with the user
+            String imageUrl = "external-images/" + "image" + counter + ".jpg";
+
+            // Update the user's profile image URL in the database (this is just a placeholder)
+            // userService.updateUserProfileImage(userId, imageUrl);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("imageUrl", imageUrl);
+            counter++;
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -92,5 +136,13 @@ public class UserService implements IBaseService<User, UserDto> {
     @Override
     public Page<UserDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
+    }
+
+    public void updateUserProfileImage(Long userId, String imageUrl) {
+        // Fetch the user by ID and update the profile image URL
+        //User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User user = userRepository.findById(userId).get();
+        user.setImage(imageUrl);
+        userRepository.save(user);
     }
 }
