@@ -1,5 +1,6 @@
 package com.example.orderwise.rest.controller;
 
+import com.example.orderwise.bean.ChangePasswordRequest;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.rest.api.UserApi;
 import com.example.orderwise.service.UserService;
@@ -56,5 +57,10 @@ public class UserController implements UserApi {
 
     public ResponseEntity<Map<String, String>> uploadProfileImage(MultipartFile file) {
         return userService.uploadProfileImage(file);
+    }
+
+    public void changePassword(ChangePasswordRequest request) {
+        String username = request.getUsername();
+        userService.changePassword(username, request);
     }
 }

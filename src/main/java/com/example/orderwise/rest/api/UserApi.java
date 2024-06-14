@@ -1,5 +1,6 @@
 package com.example.orderwise.rest.api;
 
+import com.example.orderwise.bean.ChangePasswordRequest;
 import com.example.orderwise.common.dto.UserDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
@@ -34,4 +35,6 @@ public interface UserApi {
                         @RequestParam(defaultValue = "id") String sort);
     @PostMapping("/profile-image")
     ResponseEntity<Map<String, String>> uploadProfileImage(@RequestParam("file") MultipartFile file);
+    @PostMapping("/change-password")
+    void changePassword(@RequestBody ChangePasswordRequest request);
 }

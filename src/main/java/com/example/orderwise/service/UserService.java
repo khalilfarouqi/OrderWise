@@ -1,6 +1,7 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.bean.ChangePasswordRequest;
 import com.example.orderwise.common.config.JsonProperties;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.User;
@@ -154,5 +155,21 @@ public class UserService implements IBaseService<User, UserDto> {
         User user = userRepository.findById(userId).get();
         user.setImage(imageUrl);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void changePassword(String username, ChangePasswordRequest request) {
+        try {
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new Exception("User not found"));
+
+            if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
+                throw new Exception("Old password is incorrect");
+            }
+            user.setPassword(encoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
     }
 }
