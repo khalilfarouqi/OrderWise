@@ -68,7 +68,17 @@ public class UserService implements IBaseService<User, UserDto> {
     public UserDto update(UserDto dto) {
         Optional<User> user = userRepository.findByUsername(dto.getUsername());
         if (user.isPresent()) {
-            user.get().setImage(dto.getImage());
+            if (dto.getImage() != null)
+                user.get().setImage(dto.getImage());
+            else {
+                user.get().setGender(dto.getGender());
+                user.get().setFirstname(dto.getFirstname());
+                user.get().setLastname(dto.getLastname());
+                user.get().setCin(dto.getCin());
+                user.get().setCity(dto.getCity());
+                user.get().setEmail(dto.getEmail());
+                user.get().setTel(dto.getTel());
+            }
             return modelMapper.map(userRepository.save(modelMapper.map(user.get(), User.class)), UserDto.class);
         } else {
             throw new BusinessException(String.format("User not found [%s]", dto.getUsername()));
