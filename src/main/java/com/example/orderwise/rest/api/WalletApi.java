@@ -27,4 +27,6 @@ public interface WalletApi {
                         @RequestParam(defaultValue = "10") Integer size,
                         @RequestParam(defaultValue = "asc") String order,
                         @RequestParam(defaultValue = "id") String sort);
+    @GetMapping(value = "/seller/{username}")
+    WalletDto getWalletBySeller(@PathVariable("username") String username);
 }

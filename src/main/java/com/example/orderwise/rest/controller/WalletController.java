@@ -45,4 +45,8 @@ public class WalletController implements WalletApi {
     public Page<WalletDto> search(String query, Integer page, Integer size, String order, String sort) {
         return walletService.rsqlQuery(query, page, size, order, sort);
     }
+
+    public WalletDto getWalletBySeller(String username) {
+        return walletService.getWalletBySeller(username);
+    }
 }

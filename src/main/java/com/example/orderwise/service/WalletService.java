@@ -52,4 +52,8 @@ public class WalletService implements IBaseService<Wallet, WalletDto> {
     public Page<WalletDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
     }
+
+    public WalletDto getWalletBySeller(String username) {
+        return modelMapper.map(walletRepository.findBySellerUsername(username), WalletDto.class);
+    }
 }
