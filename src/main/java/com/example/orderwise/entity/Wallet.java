@@ -15,6 +15,8 @@ public class Wallet {
     @GeneratedValue
     private Long id;
     private double sold;
+    private double amountCredited;
+    private double amountDeposited;
     @ManyToOne
     private User user;
     @ManyToOne

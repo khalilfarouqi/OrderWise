@@ -12,6 +12,8 @@ import java.io.Serializable;
 public class WalletDto implements Serializable {
     private Long id;
     private double sold;
+    private double amountCredited;
+    private double amountDeposited;
 
     private UserDto user;
     private UserDto seller;
