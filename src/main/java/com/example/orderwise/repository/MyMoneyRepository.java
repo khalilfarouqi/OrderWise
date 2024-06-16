@@ -4,9 +4,9 @@ import com.example.orderwise.entity.MyMoney;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface MyMoneyRepository extends JpaRepository<MyMoney, Long> {
-    Optional<MyMoney> findByUserUsername(String username);
+    List<MyMoney> findByUserUsername(String username);
 }

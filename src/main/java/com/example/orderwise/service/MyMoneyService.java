@@ -45,11 +45,16 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
     public MyMoneyDto findByUserUsername(String username) {
         Optional<MyMoney> myMoney = myMoneyRepository.findByUserUsername(username);
         return myMoney.map(money -> modelMapper.map(money, MyMoneyDto.class)).orElse(null);
+    public List<MyMoneyDto> findByUserUsername(String username) {
+        return myMoneyRepository.findByUserUsername(username).stream().map(myMoney -> modelMapper.map(myMoney, MyMoneyDto.class)).toList();
     }
 
     @Override
     public List<MyMoneyDto> findAll() {
-        return List.of();
+        return myMoneyRepository.findAll()
+                .stream()
+                .map(money -> modelMapper.map(money, MyMoneyDto.class))
+                .toList();
     }
 
     @Override

@@ -12,5 +12,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/v1/mymoney")
 public interface MyMoneyApi {
     @GetMapping(value = "/{username}")
-    MyMoneyDto findByUserUsername(@PathVariable("username") String username);
+    List<MyMoneyDto> findByUserUsername(@PathVariable("username") String username);
 }

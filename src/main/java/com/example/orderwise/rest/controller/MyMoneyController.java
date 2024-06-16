@@ -14,6 +14,7 @@ public class MyMoneyController implements MyMoneyApi {
     private final MyMoneyService myMoneyService;
 
     public MyMoneyDto findByUserUsername(String username) {
+    public List<MyMoneyDto> findByUserUsername(String username) {
         return myMoneyService.findByUserUsername(username);
     }
 }
