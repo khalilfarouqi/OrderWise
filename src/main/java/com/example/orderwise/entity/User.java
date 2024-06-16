@@ -38,4 +38,8 @@ public class User {
     @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<MyMoney> myMonies;
 }

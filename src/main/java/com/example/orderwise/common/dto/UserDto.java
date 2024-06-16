@@ -34,4 +34,7 @@ public class UserDto implements Serializable {
 
     @JsonIgnore
     private List<NotificationDto> notificationDtos;
+
+    @JsonIgnore
+    private List<MyMoneyDto> myMoneyDtos;
 }
