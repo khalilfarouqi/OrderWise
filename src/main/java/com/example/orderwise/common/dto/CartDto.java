@@ -15,7 +15,7 @@ public class CartDto implements Serializable {
     private Long id;
     private double itemsPrice;
 
-    private CustomerDto customerDto;
+    private CustomerDto customer;
     @JsonIgnore
-    private List<ItemDto> itemDtos;
+    private List<ItemDto> items;
 }
