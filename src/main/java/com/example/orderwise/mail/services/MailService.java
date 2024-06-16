@@ -1,5 +1,6 @@
 package com.example.orderwise.mail.services;
 
+import com.example.orderwise.common.dto.MyMoneyDto;
 import com.example.orderwise.common.dto.UserDto;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,24 @@ public class MailService {
         helper.setTo(toAddress);
         helper.setSubject(subject);
         helper.setText(FreeMarkerTemplateUtils.processTemplateIntoString(freemarkerConfig.getTemplate("Login.ftlh"), model), true);
+
+        mailSender.send(message);
+    }
+
+    public void afterSendDemandMoney(String subject, MyMoneyDto myMoneyDto) throws Exception {
+        Map<String, Object> model = new HashMap<>();
+        model.put("fullName", myMoneyDto.getUser().getFirstname() + " " + myMoneyDto.getUser().getLastname());
+        model.put("montant", myMoneyDto.getMontant());
+
+        String toAddress = myMoneyDto.getUser().getEmail();
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromEmail);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+        helper.setText(FreeMarkerTemplateUtils.processTemplateIntoString(freemarkerConfig.getTemplate("demande.ftlh"), model), true);
 
         mailSender.send(message);
     }

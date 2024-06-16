@@ -1,12 +1,14 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.common.config.JsonProperties;
 import com.example.orderwise.common.dto.MyMoneyDto;
 import com.example.orderwise.common.dto.WalletDto;
 import com.example.orderwise.entity.MyMoney;
 import com.example.orderwise.entity.User;
 import com.example.orderwise.entity.enums.EtatDemande;
 import com.example.orderwise.exception.BusinessException;
+import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.repository.MyMoneyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,11 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
     private final MyMoneyRepository myMoneyRepository;
     private final ModelMapper modelMapper;
 
+    private final JsonProperties jsonProperties;
+
     private final UserService userService;
     private final WalletService walletService;
+    private final MailService mailService;
 
     @Override
     @Transactional
@@ -48,6 +53,12 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
         myMoney.setUser(modelMapper.map(userService.findByUsername(dto.getUser().getUsername()), User.class));
         myMoney.setDateDeDemande(new Date());
         myMoney.setEtatDemande(EtatDemande.ENCOURS);
+
+        try {
+            mailService.afterSendDemandMoney(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), modelMapper.map(myMoney, MyMoneyDto.class));
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
         return modelMapper.map(myMoneyRepository.save(myMoney), MyMoneyDto.class);
     }
 

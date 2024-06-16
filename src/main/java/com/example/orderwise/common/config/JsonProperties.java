@@ -13,4 +13,5 @@ import org.springframework.stereotype.Component;
 @Setter
 public class JsonProperties {
     private String newCustomerSubject;
+    private String newDemandMoneySubject;
 }
