@@ -2,6 +2,7 @@ package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.common.dto.WalletDto;
+import com.example.orderwise.entity.User;
 import com.example.orderwise.entity.Wallet;
 import com.example.orderwise.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -54,6 +56,7 @@ public class WalletService implements IBaseService<Wallet, WalletDto> {
     }
 
     public WalletDto getWalletBySeller(String username) {
-        return modelMapper.map(walletRepository.findBySellerUsername(username), WalletDto.class);
+        Optional<Wallet> walletOptional = walletRepository.findBySellerUsername(username);
+        return walletOptional.map(wallet -> modelMapper.map(wallet, WalletDto.class)).orElse(null);
     }
 }
