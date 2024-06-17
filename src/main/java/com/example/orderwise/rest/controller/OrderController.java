@@ -1,5 +1,6 @@
 package com.example.orderwise.rest.controller;
 
+import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.rest.api.OrderApi;
 import com.example.orderwise.service.OrderService;
@@ -43,6 +44,10 @@ public class OrderController implements OrderApi {
 
     public List<OrderDto> getOrderBySellerUsername(String username) {
         return orderService.findBySellerUsername(username);
+    }
+
+    public DashboardBean dashState(String username) {
+        return orderService.dashState(username);
     }
 
     @Override
