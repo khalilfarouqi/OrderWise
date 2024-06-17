@@ -15,5 +15,6 @@ public enum Status {
     INTRANSIT,
     CANCEL,
     WAITINGLOAD,
-    OUTSTOCK
+    OUTSTOCK,
+    INPROGRESS
 }
