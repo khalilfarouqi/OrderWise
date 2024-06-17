@@ -1,5 +1,6 @@
 package com.example.orderwise.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,5 +19,6 @@ public class Item {
     @OneToOne
     private Product product;
     @ManyToOne
+    @JsonIgnore
     private Cart cart;
 }

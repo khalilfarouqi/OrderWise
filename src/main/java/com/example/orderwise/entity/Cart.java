@@ -21,6 +21,5 @@ public class Cart {
     @OneToOne
     private Customer customer;
     @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER)
-    @JsonIgnore
     private List<Item> items;
 }

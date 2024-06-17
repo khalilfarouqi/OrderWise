@@ -1,5 +1,6 @@
 package com.example.orderwise.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +15,6 @@ public class ItemDto implements Serializable {
     private int qty;
 
     private ProductDto product;
+    @JsonIgnore
     private CartDto cart;
 }
