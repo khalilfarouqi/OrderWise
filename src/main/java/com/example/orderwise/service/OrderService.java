@@ -40,6 +40,13 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         return modelMapper.map(orderRepository.findById(id), OrderDto.class);
     }
 
+    public List<OrderDto> findBySellerUsername(String username) {
+        return orderRepository.findBySellerUsername(username)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
     @Override
     public List<OrderDto> findAll() {
         return orderRepository.findAll()

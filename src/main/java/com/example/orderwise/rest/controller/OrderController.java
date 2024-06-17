@@ -41,6 +41,10 @@ public class OrderController implements OrderApi {
         return orderService.findAll();
     }
 
+    public List<OrderDto> getOrderBySellerUsername(String username) {
+        return orderService.findBySellerUsername(username);
+    }
+
     @Override
     public Page<OrderDto> search(String query, Integer page, Integer size, String order, String sort) {
         return orderService.rsqlQuery(query, page, size, order, sort);

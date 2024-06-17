@@ -19,6 +19,8 @@ public interface OrderApi {
     void delete(@PathVariable Long id);
     @GetMapping(value = "/{id}")
     OrderDto getOrderById(@PathVariable("id") Long id);
+    @GetMapping(value = "/seller/{username}")
+    List<OrderDto> getOrderBySellerUsername(@PathVariable("username") String username);
     @GetMapping(value = "/getAll")
     List<OrderDto> getAllOrder();
     @GetMapping(value = "/search")
