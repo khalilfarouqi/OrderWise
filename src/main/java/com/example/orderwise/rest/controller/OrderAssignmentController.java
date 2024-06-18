@@ -41,6 +41,10 @@ public class OrderAssignmentController implements OrderAssignmentApi {
         return orderAssignmentService.findAll();
     }
 
+    public List<OrderAssignmentDto> getOrderAssignmentsBySellerUsername(String username) {
+        return orderAssignmentService.getOrderAssignmentsBySellerUsername(username);
+    }
+
     @Override
     public Page<OrderAssignmentDto> search(String query, Integer page, Integer size, String order, String sort) {
         return orderAssignmentService.rsqlQuery(query, page, size, order, sort);

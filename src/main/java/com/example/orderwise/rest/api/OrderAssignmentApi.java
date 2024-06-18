@@ -21,6 +21,8 @@ public interface OrderAssignmentApi {
     OrderAssignmentDto getOrderAssignmentById(@PathVariable("id") Long id);
     @GetMapping(value = "/getAll")
     List<OrderAssignmentDto> getAllOrderAssignment();
+    @GetMapping(value = "/seller/{username}")
+    List<OrderAssignmentDto> getOrderAssignmentsBySellerUsername(@PathVariable("username") String username);
     @GetMapping(value = "/search")
     Page<OrderAssignmentDto> search(@RequestParam(defaultValue = "id>0") String query,
                         @RequestParam(defaultValue = "0") Integer page,

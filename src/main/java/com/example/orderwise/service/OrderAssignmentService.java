@@ -48,6 +48,13 @@ public class OrderAssignmentService implements IBaseService<OrderAssignment, Ord
                 .toList();
     }
 
+    public List<OrderAssignmentDto> getOrderAssignmentsBySellerUsername(String username) {
+        return orderAssignmentRepository.getOrderAssignmentsBySellerUsername(username)
+                .stream()
+                .map(orderAssignment -> modelMapper.map(orderAssignment, OrderAssignmentDto.class))
+                .toList();
+    }
+
     @Override
     public Page<OrderAssignmentDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
