@@ -22,7 +22,7 @@ public interface OrderApi {
     OrderDto getOrderById(@PathVariable("id") Long id);
     @GetMapping(value = "/seller/{username}")
     List<OrderDto> getOrderBySellerUsername(@PathVariable("username") String username);
-    @GetMapping(value = "/dashstate/{username}")
+    @GetMapping(value = "/dashboard-state/{username}")
     DashboardBean dashState(@PathVariable("username") String username);
     @GetMapping(value = "/getAll")
     List<OrderDto> getAllOrder();

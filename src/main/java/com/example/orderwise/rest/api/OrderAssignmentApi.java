@@ -9,7 +9,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*")
 @Tag(name = "OrderAssignment", description = "REST API for Order Assignment information")
-@RequestMapping("/v1/orderAssignment")
+@RequestMapping("/v1/order-assignment")
 public interface OrderAssignmentApi {
     @PostMapping
     OrderAssignmentDto save(@RequestBody OrderAssignmentDto orderAssignment);
