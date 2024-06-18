@@ -32,4 +32,10 @@ public interface OrderApi {
                         @RequestParam(defaultValue = "10") Integer size,
                         @RequestParam(defaultValue = "asc") String order,
                         @RequestParam(defaultValue = "id") String sort);
+    @GetMapping(value = "/confirm/{username}")
+    List<OrderDto> getOrdersConfirm(@PathVariable("username") String username);
+    @GetMapping(value = "/deliver/{username}")
+    List<OrderDto> getOrdersDeliver(@PathVariable("username") String username);
+    @GetMapping(value = "/return/{username}")
+    List<OrderDto> getOrdersReturn(@PathVariable("username") String username);
 }

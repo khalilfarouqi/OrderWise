@@ -114,4 +114,25 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     public Page<OrderDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
     }
+
+    public List<OrderDto> getOrdersConfirm(String sellerUsername) {
+        return orderRepository.getAllByStageAndSeller(Stage.CONFIRMATION, sellerUsername)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getOrdersDeliver(String sellerUsername) {
+        return orderRepository.getAllByStageAndSeller(Stage.SHIPPING, sellerUsername)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getOrdersReturn(String sellerUsername) {
+        return orderRepository.getAllByStageAndSeller(Stage.RETURN, sellerUsername)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
 }

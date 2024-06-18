@@ -2,6 +2,7 @@ package com.example.orderwise.rest.controller;
 
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
+import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.rest.api.OrderApi;
 import com.example.orderwise.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +54,17 @@ public class OrderController implements OrderApi {
     @Override
     public Page<OrderDto> search(String query, Integer page, Integer size, String order, String sort) {
         return orderService.rsqlQuery(query, page, size, order, sort);
+    }
+
+    public List<OrderDto> getOrdersConfirm(String sellerUsername) {
+        return orderService.getOrdersConfirm(sellerUsername);
+    }
+
+    public List<OrderDto> getOrdersDeliver(String sellerUsername) {
+        return orderService.getOrdersDeliver(sellerUsername);
+    }
+
+    public List<OrderDto> getOrdersReturn(String sellerUsername) {
+        return orderService.getOrdersReturn(sellerUsername);
     }
 }
