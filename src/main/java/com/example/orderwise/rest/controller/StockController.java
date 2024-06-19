@@ -41,6 +41,10 @@ public class StockController implements StockApi {
         return stockService.findAll();
     }
 
+    public List<StockDto> getStocksByProductSellerUsername(String username) {
+        return stockService.getStocksByProductSellerUsername(username);
+    }
+
     @Override
     public Page<StockDto> search(String query, Integer page, Integer size, String order, String sort) {
         return stockService.rsqlQuery(query, page, size, order, sort);
