@@ -24,4 +24,6 @@ public class Product {
     private Double weight;
     @ManyToOne
     private User seller;
+    @OneToOne
+    private Photo photo;
 }
