@@ -21,6 +21,8 @@ public interface StockApi {
     StockDto getStockById(@PathVariable("id") Long id);
     @GetMapping(value = "/getAll")
     List<StockDto> getAllStock();
+    @GetMapping(value = "/seller/{username}")
+    List<StockDto> getStocksByProductSellerUsername(@PathVariable("username") String username);
     @GetMapping(value = "/search")
     Page<StockDto> search(@RequestParam(defaultValue = "id>0") String query,
                         @RequestParam(defaultValue = "0") Integer page,

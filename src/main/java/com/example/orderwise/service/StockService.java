@@ -48,6 +48,13 @@ public class StockService implements IBaseService<Stock, StockDto> {
                 .toList();
     }
 
+    public List<StockDto> getStocksByProductSellerUsername(String username) {
+        return stockRepository.getStocksByProductSellerUsername(username)
+                .stream()
+                .map(stock -> modelMapper.map(stock, StockDto.class))
+                .toList();
+    }
+
     @Override
     public Page<StockDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
