@@ -19,6 +19,8 @@ public interface ProductApi {
     void delete(@PathVariable Long id);
     @GetMapping(value = "/{id}")
     ProductDto getProductById(@PathVariable("id") Long id);
+    @GetMapping(value = "/seller/{username}")
+    List<ProductDto> getProductsBySellerUsername(@PathVariable("username") String username);
     @GetMapping(value = "/getAll")
     List<ProductDto> getAllProduct();
     @GetMapping(value = "/search")
