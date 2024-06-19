@@ -14,6 +14,7 @@ public class DashboardBean {
     private int ordersRejectedInConfirmation;
     private int ordersRejectedInDelivery;
     private int ordersInProgress;
+    private int ordersNotTreated;
     private int ordersReturned;
     private int ordersValidated;
     private int ordersToConfirm;
