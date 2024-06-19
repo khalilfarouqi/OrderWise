@@ -62,6 +62,11 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     public DashboardBean dashState(String username) {
         WalletDto walletDto = walletService.getWalletBySeller(username);
         List<OrderDto> orders = findBySellerUsername(username);
+
+        Date dateOfLastConfirmation = orderRepository.getDateOfLastConfirmation(Stage.CONFIRMATION, username);
+        Date dateOfLastDelivered = orderRepository.getDateOfLastDelivered(Stage.SHIPPING, username);
+        Date dateOfLastReturn = orderRepository.getDateOfLastReturn(Stage.RETURN, username);
+
         dashboardBean.setTotalSales(walletDto.getSold());
         dashboardBean.setCurrentMonthOrderCount((int) orders.stream()
                 .filter(orderDto -> {
@@ -96,12 +101,18 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         dashboardBean.setOrdersToConfirm((int) orders.stream()
                 .filter(orderDto -> orderDto.getStatus().equals(Status.WAITING) && orderDto.getStage().equals(Stage.CONFIRMATION))
                 .count());
+        if (dateOfLastConfirmation != null)
+            dashboardBean.setDateOrdersToConfirm((int) (new Date().getTime() - dateOfLastConfirmation.getTime()));
         dashboardBean.setOrdersToDeliver((int) orders.stream()
                 .filter(orderDto -> orderDto.getStatus().equals(Status.WAITING) && orderDto.getStage().equals(Stage.SHIPPING))
                 .count());
+        if (dateOfLastDelivered != null)
+            dashboardBean.setDateOrdersToDeliver((int) (new Date().getTime() - dateOfLastDelivered.getTime()));
         dashboardBean.setOrdersToReturn((int) orders.stream()
                 .filter(orderDto -> orderDto.getStatus().equals(Status.WAITING) && orderDto.getStage().equals(Stage.RETURN))
                 .count());
+        if (dateOfLastReturn != null)
+            dashboardBean.setDateOrdersToReturn((int) (new Date().getTime() - dateOfLastReturn.getTime()));
         return dashboardBean;
     }
 
