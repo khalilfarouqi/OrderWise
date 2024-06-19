@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -18,6 +20,9 @@ public class DashboardBean {
     private int ordersReturned;
     private int ordersValidated;
     private int ordersToConfirm;
+    private int dateOrdersToConfirm;
     private int ordersToDeliver;
+    private int dateOrdersToDeliver;
     private int ordersToReturn;
+    private int dateOrdersToReturn;
 }
