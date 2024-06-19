@@ -41,6 +41,10 @@ public class ProductController implements ProductApi {
         return productService.findAll();
     }
 
+    public List<ProductDto> getProductsBySellerUsername(String username) {
+        return productService.getProductsBySellerUsername(username);
+    }
+
     @Override
     public Page<ProductDto> search(String query, Integer page, Integer size, String order, String sort) {
         return productService.rsqlQuery(query, page, size, order, sort);

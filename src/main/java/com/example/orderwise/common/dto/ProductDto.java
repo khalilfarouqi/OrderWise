@@ -18,4 +18,5 @@ public class ProductDto implements Serializable {
     private Double weight;
 
     private UserDto seller;
+    private PhotoDto photo;
 }

@@ -40,6 +40,13 @@ public class ProductService implements IBaseService<Product, ProductDto> {
         return modelMapper.map(productRepository.findById(id), ProductDto.class);
     }
 
+    public List<ProductDto> getProductsBySellerUsername(String username) {
+        return productRepository.getProductsBySellerUsername(username)
+                .stream()
+                .map(product -> modelMapper.map(product, ProductDto.class))
+                .toList();
+    }
+
     @Override
     public List<ProductDto> findAll() {
         return productRepository.findAll()
