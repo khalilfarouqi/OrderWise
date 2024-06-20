@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -37,7 +38,8 @@ public class ProductService implements IBaseService<Product, ProductDto> {
 
     @Override
     public ProductDto findById(Long id) {
-        return modelMapper.map(productRepository.findById(id), ProductDto.class);
+        Optional<Product> productOptional = productRepository.findById(id);
+        return productOptional.map(product -> modelMapper.map(product, ProductDto.class)).orElse(null);
     }
 
     public List<ProductDto> getProductsBySellerUsername(String username) {
