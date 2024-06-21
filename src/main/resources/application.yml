@@ -39,4 +39,4 @@ app:
     from: bio.khalil.f@gmail.com
 
 upload:
-  dir: '/Users/khalilfarouqi/Documents/Angular/upload/'
+  dir: '/Users/khalilfarouqi/Documents/Angular/upload'
