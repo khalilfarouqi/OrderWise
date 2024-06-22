@@ -52,7 +52,7 @@ public class FileUploadsService {
             Files.copy(file.getInputStream(), filePath);
 
             // Return the file download URL
-            String fileDownloadUri = "/fileUploads/files/" + fileName;
+            String fileDownloadUri = "assets/" + fileName;
             return ResponseEntity.ok().body(new FileUploadResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize()));
 
         } catch (IOException e) {
