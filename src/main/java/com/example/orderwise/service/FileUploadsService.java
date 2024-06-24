@@ -47,8 +47,13 @@ public class FileUploadsService {
                 Files.createDirectories(uploadPath);
             }
 
-            // Save the file locally
+            // Check if the file already exists
             Path filePath = uploadPath.resolve(fileName);
+            if (Files.exists(filePath)) {
+                return new ResponseEntity<>("File already exists", HttpStatus.CONFLICT);
+            }
+
+            // Save the file locally
             Files.copy(file.getInputStream(), filePath);
 
             // Return the file download URL
