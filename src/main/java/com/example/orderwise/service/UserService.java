@@ -69,9 +69,11 @@ public class UserService implements IBaseService<User, UserDto> {
     public UserDto update(UserDto dto) {
         Optional<User> user = userRepository.findByUsername(dto.getUsername());
         if (user.isPresent()) {
-            if (dto.getImage() != null)
-                user.get().setImage(dto.getImage());
-            else {
+            if (dto.getImage() != null) {
+                int lastIndex = Math.max(dto.getImage().lastIndexOf('\\'), dto.getImage().lastIndexOf('/'));
+                String fileName = dto.getImage().substring(lastIndex + 1);
+                user.get().setImage(fileName);
+            } else {
                 user.get().setGender(dto.getGender());
                 user.get().setFirstname(dto.getFirstname());
                 user.get().setLastname(dto.getLastname());
