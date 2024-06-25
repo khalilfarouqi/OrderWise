@@ -1,4 +1,8 @@
 {
   "newCustomerSubject":"Vos informations de connexion",
-  "newDemandMoneySubject":"Demande de retrait"
+  "newDemandMoneySubject":"Demande de retrait",
+  "sendPasswordSms":"Vous avez reçu vos informations de connexion dans votre boîte email.",
+  "demandOfMoney":"Votre demande est en cours, vous recevrez une réponse dans les plus brefs délais.",
+  "demandOfMoneyAccepted":"Votre demande de remboursement a été acceptée.",
+  "demandOfMoneyRefuser":"Votre demande de remboursement a été refusée."
 }
