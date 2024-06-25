@@ -23,22 +23,22 @@ public class NotificationService implements IBaseService<Notification, Notificat
     private final ModelMapper modelMapper;
     @Override
     public NotificationDto save(NotificationDto dto) {
-        return null;
+        return modelMapper.map(notificationRepository.save(modelMapper.map(dto, Notification.class)), NotificationDto.class);
     }
 
     @Override
     public NotificationDto update(NotificationDto dto) {
-        return null;
+        return modelMapper.map(notificationRepository.save(modelMapper.map(dto, Notification.class)), NotificationDto.class);
     }
 
     @Override
     public void delete(Long id) {
-
+        notificationRepository.deleteById(id);
     }
 
     @Override
     public NotificationDto findById(Long id) {
-        return null;
+        return modelMapper.map(notificationRepository.findById(id), NotificationDto.class);
     }
 
     @Override
