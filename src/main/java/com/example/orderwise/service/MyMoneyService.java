@@ -9,6 +9,7 @@ import com.example.orderwise.entity.User;
 import com.example.orderwise.entity.enums.EtatDemande;
 import com.example.orderwise.exception.BusinessException;
 import com.example.orderwise.mail.services.MailService;
+import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.MyMoneyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +34,20 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
     private final UserService userService;
     private final WalletService walletService;
     private final MailService mailService;
+    private final SmsService smsService;
 
     @Override
     @Transactional
     public MyMoneyDto save(MyMoneyDto dto) {
+        String tel;
         MyMoney myMoney = modelMapper.map(dto, MyMoney.class);
         WalletDto walletDto = walletService.getWalletBySeller(dto.getUser().getUsername());
+
+        dto.setUser(userService.findByUsername(dto.getUser().getUsername()));
+        tel = dto.getUser().getTel();
+        if (tel.startsWith("0")) {
+            tel = tel.replaceFirst("0", "+212");
+        }
 
         double totalPendingAmount = findByUserUsername(dto.getUser().getUsername()).stream()
                 .filter(myMoneyDto -> myMoneyDto.getEtatDemande() == EtatDemande.ENCOURS)
@@ -56,6 +65,7 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
 
         try {
             mailService.afterSendDemandMoney(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), modelMapper.map(myMoney, MyMoneyDto.class));
+            smsService.sendSms(tel, jsonProperties.getDemandOfMoney().replaceAll("[\",]", ""));
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
