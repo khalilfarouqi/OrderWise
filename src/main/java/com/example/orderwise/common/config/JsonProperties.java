@@ -14,4 +14,8 @@ import org.springframework.stereotype.Component;
 public class JsonProperties {
     private String newCustomerSubject;
     private String newDemandMoneySubject;
+    private String sendPasswordSms;
+    private String demandOfMoney;
+    private String demandOfMoneyAccepted;
+    private String demandOfMoneyRefuser;
 }

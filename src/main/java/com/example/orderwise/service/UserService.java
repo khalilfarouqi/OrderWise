@@ -6,6 +6,7 @@ import com.example.orderwise.common.config.JsonProperties;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.User;
 import com.example.orderwise.mail.services.MailService;
+import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.UserRepository;
 import com.example.orderwise.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class UserService implements IBaseService<User, UserDto> {
     private final ModelMapper modelMapper;
     private final JsonProperties jsonProperties;
     private final MailService mailService;
+    private final SmsService smsService;
     public static int counter = 1;
 
     @Value("${upload.dir}")
@@ -57,6 +59,7 @@ public class UserService implements IBaseService<User, UserDto> {
                 });
         try {
             mailService.sendLoginPasswordMail(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), dto);
+            smsService.sendSms(dto.getTel(), jsonProperties.getSendPasswordSms().replaceAll("[\",]", ""));
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
