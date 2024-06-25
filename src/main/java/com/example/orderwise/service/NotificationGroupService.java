@@ -1,10 +1,14 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.common.dto.NotificationDto;
 import com.example.orderwise.common.dto.NotificationGroupDto;
+import com.example.orderwise.entity.Notification;
 import com.example.orderwise.entity.NotificationGroup;
+import com.example.orderwise.repository.NotificationGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class NotificationGroupService implements IBaseService<NotificationGroup, NotificationGroupDto> {
+    private final NotificationGroupRepository notificationGroupRepository;
+    private final ModelMapper modelMapper;
     @Override
     public NotificationGroupDto save(NotificationGroupDto dto) {
-        return null;
+        return modelMapper.map(notificationGroupRepository.save(modelMapper.map(dto, NotificationGroup.class)), NotificationGroupDto.class);
     }
 
     @Override

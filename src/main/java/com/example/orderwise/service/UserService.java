@@ -3,8 +3,11 @@ package com.example.orderwise.service;
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.ChangePasswordRequest;
 import com.example.orderwise.common.config.JsonProperties;
+import com.example.orderwise.common.dto.NotificationDto;
+import com.example.orderwise.common.dto.NotificationGroupDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.User;
+import com.example.orderwise.entity.enums.NotificationType;
 import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.UserRepository;
@@ -24,10 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -35,10 +35,15 @@ import java.util.Optional;
 @Service
 public class UserService implements IBaseService<User, UserDto> {
     private final UserRepository userRepository;
+
     private final ModelMapper modelMapper;
     private final JsonProperties jsonProperties;
+
     private final MailService mailService;
     private final SmsService smsService;
+    private final NotificationService notificationService;
+    private final NotificationGroupService notificationGroupService;
+
     public static int counter = 1;
 
     @Value("${upload.dir}")
@@ -49,22 +54,71 @@ public class UserService implements IBaseService<User, UserDto> {
     @Override
     @Transactional
     public UserDto save(UserDto dto) {
+        validateUser(dto);
+        sendNotifications(dto);
+        encodePassword(dto);
+
+        NotificationGroupDto notificationGroupDto = createNotificationGroup();
+        notificationGroupDto = notificationGroupService.save(notificationGroupDto);
+
+        NotificationDto notificationDto = createNotification(notificationGroupDto, dto);
+        notificationService.save(notificationDto);
+
+        User savedUser = userRepository.save(modelMapper.map(dto, User.class));
+        return modelMapper.map(savedUser, UserDto.class);
+    }
+
+    private void validateUser(UserDto dto) {
         userRepository.findByUsername(dto.getUsername())
-                .ifPresent(a ->{
-                    throw new BusinessException(String.format("User with the same username [%s] exist", dto.getUsername()));
+                .ifPresent(a -> {
+                    throw new BusinessException(String.format("User with the same username [%s] exists", dto.getUsername()));
                 });
+
         userRepository.findByEmail(dto.getEmail())
-                .ifPresent(a ->{
-                    throw new BusinessException(String.format("User with the same Email [%s] exist", dto.getEmail()));
+                .ifPresent(a -> {
+                    throw new BusinessException(String.format("User with the same Email [%s] exists", dto.getEmail()));
                 });
+    }
+
+    private String formatPhoneNumber(String tel) {
+        if (tel.startsWith("0")) {
+            return tel.replaceFirst("0", "+212");
+        }
+        return tel;
+    }
+
+    private void sendNotifications(UserDto dto) {
         try {
             mailService.sendLoginPasswordMail(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), dto);
-            smsService.sendSms(dto.getTel(), jsonProperties.getSendPasswordSms().replaceAll("[\",]", ""));
+            smsService.sendSms(formatPhoneNumber(dto.getTel()), jsonProperties.getSendPasswordSms().replaceAll("[\",]", ""));
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
+    }
+
+    private void encodePassword(UserDto dto) {
         dto.setPassword(encoder.encode(dto.getPassword()));
-        return modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
+    }
+
+    private NotificationGroupDto createNotificationGroup() {
+        NotificationGroupDto notificationGroupDto = new NotificationGroupDto();
+        notificationGroupDto.setObject("Ajouter un nouveau customer.");
+        notificationGroupDto.setBody("Vous avez créé un compte chez nous.");
+        notificationGroupDto.setNotificationType(NotificationType.NOTIFICATION_SMS_MAIL);
+        notificationGroupDto.setNotificationWeb(true);
+        notificationGroupDto.setDateEnvoy(new Date());
+        return notificationGroupDto;
+    }
+
+    private NotificationDto createNotification(NotificationGroupDto notificationGroupDto, UserDto dto) {
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setObject(notificationGroupDto.getObject());
+        notificationDto.setBody(notificationGroupDto.getBody());
+        notificationDto.setIsRead(false);
+        notificationDto.setNotificationWeb(true);
+        notificationDto.setUserId(dto);
+        notificationDto.setNotificationGroup(notificationGroupDto);
+        return notificationDto;
     }
 
     @Override

@@ -2,11 +2,11 @@ package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.common.config.JsonProperties;
-import com.example.orderwise.common.dto.MyMoneyDto;
-import com.example.orderwise.common.dto.WalletDto;
+import com.example.orderwise.common.dto.*;
 import com.example.orderwise.entity.MyMoney;
 import com.example.orderwise.entity.User;
 import com.example.orderwise.entity.enums.EtatDemande;
+import com.example.orderwise.entity.enums.NotificationType;
 import com.example.orderwise.exception.BusinessException;
 import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.mail.services.SmsService;
@@ -27,6 +27,7 @@ import java.util.List;
 @Service
 public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
     private final MyMoneyRepository myMoneyRepository;
+
     private final ModelMapper modelMapper;
 
     private final JsonProperties jsonProperties;
@@ -35,41 +36,92 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
     private final WalletService walletService;
     private final MailService mailService;
     private final SmsService smsService;
+    private final NotificationService notificationService;
+    private final NotificationGroupService notificationGroupService;
 
     @Override
     @Transactional
     public MyMoneyDto save(MyMoneyDto dto) {
-        String tel;
-        MyMoney myMoney = modelMapper.map(dto, MyMoney.class);
-        WalletDto walletDto = walletService.getWalletBySeller(dto.getUser().getUsername());
-
         dto.setUser(userService.findByUsername(dto.getUser().getUsername()));
-        tel = dto.getUser().getTel();
-        if (tel.startsWith("0")) {
-            tel = tel.replaceFirst("0", "+212");
-        }
+        String tel = formatPhoneNumber(dto.getUser().getTel());
+        WalletDto walletDto = walletService.getWalletBySeller(dto.getUser().getUsername());
+        double totalPendingAmount = calculateTotalPendingAmount(dto.getUser().getUsername());
 
-        double totalPendingAmount = findByUserUsername(dto.getUser().getUsername()).stream()
+        validateAmount(dto.getMontant(), walletDto.getAmountCredited(), totalPendingAmount);
+
+        MyMoney myMoney = createMyMoneyEntity(dto);
+        sendNotifications(myMoney, tel);
+
+        NotificationGroupDto notificationGroupDto = createNotificationGroup();
+        notificationGroupDto = notificationGroupService.save(notificationGroupDto);
+
+        NotificationDto notificationDto = createNotification(notificationGroupDto, dto.getUser());
+        notificationService.save(notificationDto);
+
+        return modelMapper.map(myMoneyRepository.save(myMoney), MyMoneyDto.class);
+    }
+
+    private String formatPhoneNumber(String tel) {
+        if (tel.startsWith("0")) {
+            return tel.replaceFirst("0", "+212");
+        }
+        return tel;
+    }
+
+    private double calculateTotalPendingAmount(String username) {
+        return findByUserUsername(username).stream()
                 .filter(myMoneyDto -> myMoneyDto.getEtatDemande() == EtatDemande.ENCOURS)
                 .mapToDouble(MyMoneyDto::getMontant)
                 .sum();
+    }
 
-        if (walletDto.getAmountCredited() < dto.getMontant())
-            throw new BusinessException("Vous pouvez pas demandée ce montant.");
-        else if (totalPendingAmount + dto.getMontant() > walletDto.getAmountCredited())
-            throw new BusinessException("Vous pouvez pas demandée ce montant car vous avez déja des demandes non traitée.");
+    private void validateAmount(double requestedAmount, double walletAmount, double totalPendingAmount) {
+        if (walletAmount < requestedAmount) {
+            throw new BusinessException("Vous ne pouvez pas demander ce montant.");
+        } else if (totalPendingAmount + requestedAmount > walletAmount) {
+            throw new BusinessException("Vous ne pouvez pas demander ce montant car vous avez déjà des demandes non traitées.");
+        }
+    }
 
+    private MyMoney createMyMoneyEntity(MyMoneyDto dto) {
+        MyMoney myMoney = modelMapper.map(dto, MyMoney.class);
         myMoney.setUser(modelMapper.map(userService.findByUsername(dto.getUser().getUsername()), User.class));
         myMoney.setDateDeDemande(new Date());
         myMoney.setEtatDemande(EtatDemande.ENCOURS);
+        return myMoney;
+    }
 
+    private void sendNotifications(MyMoney myMoney, String tel) {
         try {
-            mailService.afterSendDemandMoney(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), modelMapper.map(myMoney, MyMoneyDto.class));
+            mailService.afterSendDemandMoney(
+                    jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""),
+                    modelMapper.map(myMoney, MyMoneyDto.class)
+            );
             smsService.sendSms(tel, jsonProperties.getDemandOfMoney().replaceAll("[\",]", ""));
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
-        return modelMapper.map(myMoneyRepository.save(myMoney), MyMoneyDto.class);
+    }
+
+    private NotificationGroupDto createNotificationGroup() {
+        NotificationGroupDto notificationGroupDto = new NotificationGroupDto();
+        notificationGroupDto.setObject("Ajouter un nouveau customer.");
+        notificationGroupDto.setBody("Vous avez créé un compte chez nous.");
+        notificationGroupDto.setNotificationType(NotificationType.NOTIFICATION_SMS_MAIL);
+        notificationGroupDto.setNotificationWeb(true);
+        notificationGroupDto.setDateEnvoy(new Date());
+        return notificationGroupDto;
+    }
+
+    private NotificationDto createNotification(NotificationGroupDto notificationGroupDto, UserDto dto) {
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setObject(notificationGroupDto.getObject());
+        notificationDto.setBody(notificationGroupDto.getBody());
+        notificationDto.setIsRead(false);
+        notificationDto.setNotificationWeb(true);
+        notificationDto.setUserId(dto);
+        notificationDto.setNotificationGroup(notificationGroupDto);
+        return notificationDto;
     }
 
     @Override
