@@ -31,4 +31,7 @@ public class NotificationController implements NotificationApi {
         }
         return "SMS sent successfully!";
     }
+    public List<NotificationDto> getAllNotificationNotRead(Long id) {
+        return notificationService.getAllNotificationNotRead(id);
+    }
 }

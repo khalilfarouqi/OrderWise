@@ -52,4 +52,9 @@ public class NotificationService implements IBaseService<Notification, Notificat
     public Page<NotificationDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
     }
+    public List<NotificationDto> getAllNotificationNotRead(Long id) {
+        return notificationRepository.findByIsReadIsFalseAndId(id).stream()
+                .map(notification -> modelMapper.map(notification, NotificationDto.class))
+                .toList();
+    }
 }

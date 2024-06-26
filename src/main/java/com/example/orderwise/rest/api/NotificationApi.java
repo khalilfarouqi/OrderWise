@@ -14,4 +14,6 @@ public interface NotificationApi {
     List<NotificationDto> getAllNotification();
     @PostMapping("/send-sms")
     String sendSms(@RequestParam String to, @RequestParam String message);
+    @GetMapping(value = "/getAllNotificationNotRead/{id}")
+    List<NotificationDto> getAllNotificationNotRead(@PathVariable("id") Long id);
 }
