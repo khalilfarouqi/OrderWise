@@ -116,7 +116,7 @@ public class UserService implements IBaseService<User, UserDto> {
         notificationDto.setBody(notificationGroupDto.getBody());
         notificationDto.setIsRead(false);
         notificationDto.setNotificationWeb(true);
-        notificationDto.setUserId(dto);
+        notificationDto.setUserDto(dto);
         notificationDto.setNotificationGroup(notificationGroupDto);
         return notificationDto;
     }
