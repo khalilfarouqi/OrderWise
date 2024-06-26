@@ -4,10 +4,12 @@ import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.common.dto.CustomerDto;
 import com.example.orderwise.common.dto.NotificationDto;
 import com.example.orderwise.entity.Notification;
+import com.example.orderwise.entity.User;
 import com.example.orderwise.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class NotificationService implements IBaseService<Notification, NotificationDto> {
+
     private final NotificationRepository notificationRepository;
+
     private final ModelMapper modelMapper;
+
     @Override
     public NotificationDto save(NotificationDto dto) {
         return modelMapper.map(notificationRepository.save(modelMapper.map(dto, Notification.class)), NotificationDto.class);
@@ -52,6 +57,15 @@ public class NotificationService implements IBaseService<Notification, Notificat
     public Page<NotificationDto> rsqlQuery(String query, Integer page, Integer size, String order, String sort) {
         return null;
     }
+
+    @Transactional
+    public String readNotification(Long id) {
+        NotificationDto notificationDto = modelMapper.map(notificationRepository.findById(id).orElse(null), NotificationDto.class);
+        notificationDto.setIsRead(true);
+        save(notificationDto);
+        return "successful operation";
+    }
+
     public List<NotificationDto> getAllNotificationNotRead(Long id) {
         return notificationRepository.findByIsReadIsFalseAndId(id).stream()
                 .map(notification -> modelMapper.map(notification, NotificationDto.class))
