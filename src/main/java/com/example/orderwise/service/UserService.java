@@ -112,7 +112,7 @@ public class UserService implements IBaseService<User, UserDto> {
 
     private NotificationDto createNotification(NotificationGroupDto notificationGroupDto, UserDto dto) {
         NotificationDto notificationDto = new NotificationDto();
-        notificationDto.setObject(notificationGroupDto.getObject());
+        notificationDto.setObject("Creation of you account");
         notificationDto.setBody(notificationGroupDto.getBody());
         notificationDto.setIsRead(false);
         notificationDto.setNotificationWeb(true);
