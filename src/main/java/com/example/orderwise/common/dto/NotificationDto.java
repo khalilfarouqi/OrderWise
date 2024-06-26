@@ -20,6 +20,6 @@ public class NotificationDto implements Serializable {
     private Boolean isRead;
     private Boolean notificationWeb;
 
-    private UserDto userDto;
+    private UserDto user;
     private NotificationGroupDto notificationGroup;
 }

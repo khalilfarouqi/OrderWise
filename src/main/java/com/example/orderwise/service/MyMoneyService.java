@@ -119,7 +119,7 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
         notificationDto.setBody(notificationGroupDto.getBody());
         notificationDto.setIsRead(false);
         notificationDto.setNotificationWeb(true);
-        notificationDto.setUserDto(dto);
+        notificationDto.setUser(dto);
         notificationDto.setNotificationGroup(notificationGroupDto);
         return notificationDto;
     }
