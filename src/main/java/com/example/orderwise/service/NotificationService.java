@@ -66,8 +66,8 @@ public class NotificationService implements IBaseService<Notification, Notificat
         return "successful operation";
     }
 
-    public List<NotificationDto> getAllNotificationNotRead(Long id) {
-        return notificationRepository.findByIsReadIsFalseAndId(id).stream()
+    public List<NotificationDto> getAllNotificationNotRead(String username) {
+        return notificationRepository.getNotificationNotReadByUsername(username).stream()
                 .map(notification -> modelMapper.map(notification, NotificationDto.class))
                 .toList();
     }

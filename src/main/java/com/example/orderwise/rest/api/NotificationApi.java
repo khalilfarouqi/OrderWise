@@ -18,4 +18,6 @@ public interface NotificationApi {
     String readNotification(@PathVariable("id") Long id);
     @GetMapping(value = "/getAllNotificationNotRead/{id}")
     List<NotificationDto> getAllNotificationNotRead(@PathVariable("id") Long id);
+    @GetMapping(value = "/getAllNotificationNotRead/{username}")
+    List<NotificationDto> getAllNotificationNotRead(@PathVariable("username") String username);
 }
