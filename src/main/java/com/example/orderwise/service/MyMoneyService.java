@@ -115,7 +115,7 @@ public class MyMoneyService implements IBaseService<MyMoney, MyMoneyDto> {
 
     private NotificationDto createNotification(NotificationGroupDto notificationGroupDto, UserDto dto) {
         NotificationDto notificationDto = new NotificationDto();
-        notificationDto.setObject(notificationGroupDto.getObject());
+        notificationDto.setObject("Money Service");
         notificationDto.setBody(notificationGroupDto.getBody());
         notificationDto.setIsRead(false);
         notificationDto.setNotificationWeb(true);

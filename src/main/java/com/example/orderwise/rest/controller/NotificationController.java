@@ -7,9 +7,11 @@ import com.example.orderwise.rest.api.NotificationApi;
 import com.example.orderwise.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,11 +34,11 @@ public class NotificationController implements NotificationApi {
         return "SMS sent successfully!";
     }
 
-    public String readNotification(Long id) {
+    public ResponseEntity<Map<String, String>> readNotification(Long id) {
         return notificationService.readNotification(id);
     }
 
-    public List<NotificationDto> getAllNotificationNotRead(Long id) {
-        return notificationService.getAllNotificationNotRead(id);
+    public List<NotificationDto> getAllNotificationNotRead(String username) {
+        return notificationService.getAllNotificationNotRead(username);
     }
 }
