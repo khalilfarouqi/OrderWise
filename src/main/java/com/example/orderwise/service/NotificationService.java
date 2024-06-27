@@ -1,15 +1,12 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
-import com.example.orderwise.common.dto.CustomerDto;
 import com.example.orderwise.common.dto.NotificationDto;
 import com.example.orderwise.entity.Notification;
-import com.example.orderwise.entity.User;
 import com.example.orderwise.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

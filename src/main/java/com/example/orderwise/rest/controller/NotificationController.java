@@ -1,6 +1,5 @@
 package com.example.orderwise.rest.controller;
 
-import com.example.orderwise.common.dto.CustomerDto;
 import com.example.orderwise.common.dto.NotificationDto;
 import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.rest.api.NotificationApi;
