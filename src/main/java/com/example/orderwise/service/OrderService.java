@@ -3,10 +3,12 @@ package com.example.orderwise.service;
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
+import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.common.dto.WalletDto;
 import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.Status;
+import com.example.orderwise.entity.enums.UserType;
 import com.example.orderwise.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     private final WalletService walletService;
 
     private final DashboardBean dashboardBean = new DashboardBean();
+    private final UserService userService;
 
     @Override
     public OrderDto save(OrderDto dto) {
@@ -87,7 +90,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
                 .filter(orderDto -> orderDto.getStatus().equals(Status.CANCEL) && orderDto.getStage().equals(Stage.SHIPPING))
                 .count());
         dashboardBean.setOrdersInProgress((int) orders.stream()
-                .filter(orderDto -> orderDto.getStatus().equals(Status.INPROGRESS))
+                .filter(orderDto -> orderDto.getStatus().equals(Status.IN_PROGRESS))
                 .count());
         dashboardBean.setOrdersNotTreated((int) orders.stream()
                 .filter(orderDto -> orderDto.getStatus().equals(Status.PENDING))
@@ -145,6 +148,28 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     public List<OrderDto> getOrdersReturn(String sellerUsername) {
         return orderRepository.getAllByStageAndSeller(Stage.RETURN, sellerUsername)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllByStage(Stage stage) {
+        return orderRepository.getAllByStage(stage)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllByStageAndUserType(Stage stage, UserType userType) {
+        return orderRepository.getAllByStageAndUserType(stage, userType)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> findOrderToDeliver(String username) {
+        UserDto userDto = userService.findByUsername(username);
+        return orderRepository.findOrderToDeliver(userDto.getCity())
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();

@@ -2,6 +2,8 @@ package com.example.orderwise.rest.api;
 
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
+import com.example.orderwise.entity.enums.Stage;
+import com.example.orderwise.entity.enums.UserType;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -38,4 +40,10 @@ public interface OrderApi {
     List<OrderDto> getOrdersDeliver(@PathVariable("username") String username);
     @GetMapping(value = "/return/{username}")
     List<OrderDto> getOrdersReturn(@PathVariable("username") String username);
+    @GetMapping(value = "/by-stage/{stage}")
+    List<OrderDto> getAllByStage(@PathVariable("stage") Stage stage);
+    @GetMapping(value = "/by-stage-and-userType/{stage}/{userType}")
+    List<OrderDto> getAllByStageAndUserType(@PathVariable("stage") Stage stage, @PathVariable("userType") UserType userType);
+    @GetMapping(value = "/order-to-deliver/{username}")
+    List<OrderDto> findOrderToDeliver(@PathVariable("username") String username);
 }
