@@ -67,4 +67,9 @@ public class OrderController implements OrderApi {
     public List<OrderDto> getOrdersReturn(String sellerUsername) {
         return orderService.getOrdersReturn(sellerUsername);
     }
+
+    @Override
+    public List<OrderDto> getAllByStage(Stage stage) {
+        return orderService.getAllByStage(stage);
+    }
 }

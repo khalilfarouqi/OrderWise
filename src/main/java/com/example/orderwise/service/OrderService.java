@@ -149,4 +149,11 @@ public class OrderService implements IBaseService<Order, OrderDto> {
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();
     }
+
+    public List<OrderDto> getAllByStage(Stage stage) {
+        return orderRepository.getAllByStage(stage)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
 }

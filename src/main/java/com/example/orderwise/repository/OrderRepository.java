@@ -16,6 +16,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findBySellerUsername(@Param("seller") String sellerUsername);
     @Query("select o from Order o join o.cart c join c.items i join i.product p join p.seller s where s.username = :seller and o.stage = :stage")
     List<Order> getAllByStageAndSeller(@Param("stage") Stage stage, @Param("seller") String sellerUsername);
+    List<Order> getAllByStage(Stage stage);
     @Query("select o.confirmationDate from Order o join o.cart c join c.items i join i.product p join p.seller s where s.username = :seller and o.stage = :stage order by o.confirmationDate desc")
     Date getDateOfLastConfirmation(@Param("stage") Stage stage, @Param("seller") String sellerUsername);
     @Query("select o.deliveredDate from Order o join o.cart c join c.items i join i.product p join p.seller s where s.username = :seller and o.stage = :stage order by o.deliveredDate desc")
