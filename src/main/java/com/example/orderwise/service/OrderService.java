@@ -88,7 +88,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
                 .filter(orderDto -> orderDto.getStatus().equals(Status.CANCEL) && orderDto.getStage().equals(Stage.SHIPPING))
                 .count());
         dashboardBean.setOrdersInProgress((int) orders.stream()
-                .filter(orderDto -> orderDto.getStatus().equals(Status.INPROGRESS))
+                .filter(orderDto -> orderDto.getStatus().equals(Status.IN_PROGRESS))
                 .count());
         dashboardBean.setOrdersNotTreated((int) orders.stream()
                 .filter(orderDto -> orderDto.getStatus().equals(Status.PENDING))
