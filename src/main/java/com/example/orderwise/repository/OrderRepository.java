@@ -2,6 +2,7 @@ package com.example.orderwise.repository;
 
 import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
+import com.example.orderwise.entity.enums.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Date getDateOfLastDelivered(@Param("stage") Stage stage, @Param("seller") String sellerUsername);
     @Query("select o.returnDate from Order o join o.cart c join c.items i join i.product p join p.seller s where s.username = :seller and o.stage = :stage order by o.returnDate desc")
     Date getDateOfLastReturn(@Param("stage") Stage stage, @Param("seller") String sellerUsername);
+
+    @Query("select o from Order o join o.cart c join c.items i join i.product p join p.seller s where s.userType = :userType and o.stage = :stage")
+    List<Order> getAllByStageAndUserType(@Param("stage") Stage stage,@Param("userType")  UserType userType);
 }

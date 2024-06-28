@@ -3,6 +3,7 @@ package com.example.orderwise.rest.controller;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.enums.Stage;
+import com.example.orderwise.entity.enums.UserType;
 import com.example.orderwise.rest.api.OrderApi;
 import com.example.orderwise.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -71,5 +72,9 @@ public class OrderController implements OrderApi {
     @Override
     public List<OrderDto> getAllByStage(Stage stage) {
         return orderService.getAllByStage(stage);
+    }
+
+    public List<OrderDto> getAllByStageAndUserType(Stage stage, UserType userType) {
+        return orderService.getAllByStageAndUserType(stage, userType);
     }
 }

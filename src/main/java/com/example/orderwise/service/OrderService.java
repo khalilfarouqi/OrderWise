@@ -7,6 +7,7 @@ import com.example.orderwise.common.dto.WalletDto;
 import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.Status;
+import com.example.orderwise.entity.enums.UserType;
 import com.example.orderwise.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -152,6 +153,13 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     public List<OrderDto> getAllByStage(Stage stage) {
         return orderRepository.getAllByStage(stage)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllByStageAndUserType(Stage stage, UserType userType) {
+        return orderRepository.getAllByStageAndUserType(stage, userType)
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();
