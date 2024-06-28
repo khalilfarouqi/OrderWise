@@ -26,6 +26,8 @@ public interface OrderApi {
     List<OrderDto> getOrderBySellerUsername(@PathVariable("username") String username);
     @GetMapping(value = "/dashboard-state/{username}")
     DashboardBean dashState(@PathVariable("username") String username);
+    @GetMapping(value = "/dashboard-state")
+    DashboardBean dashStateAllOrder();
     @GetMapping(value = "/getAll")
     List<OrderDto> getAllOrder();
     @GetMapping(value = "/search")
