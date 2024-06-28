@@ -77,4 +77,8 @@ public class OrderController implements OrderApi {
     public List<OrderDto> getAllByStageAndUserType(Stage stage, UserType userType) {
         return orderService.getAllByStageAndUserType(stage, userType);
     }
+
+    public List<OrderDto> findOrderToDeliver(String username) {
+        return orderService.findOrderToDeliver(username);
+    }
 }

@@ -3,6 +3,7 @@ package com.example.orderwise.service;
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
+import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.common.dto.WalletDto;
 import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
@@ -32,6 +33,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     private final WalletService walletService;
 
     private final DashboardBean dashboardBean = new DashboardBean();
+    private final UserService userService;
 
     @Override
     public OrderDto save(OrderDto dto) {
@@ -160,6 +162,14 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     public List<OrderDto> getAllByStageAndUserType(Stage stage, UserType userType) {
         return orderRepository.getAllByStageAndUserType(stage, userType)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> findOrderToDeliver(String username) {
+        UserDto userDto = userService.findByUsername(username);
+        return orderRepository.findOrderToDeliver(userDto.getCity())
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();

@@ -42,6 +42,8 @@ public interface OrderApi {
     List<OrderDto> getOrdersReturn(@PathVariable("username") String username);
     @GetMapping(value = "/by-stage/{stage}")
     List<OrderDto> getAllByStage(@PathVariable("stage") Stage stage);
-    @GetMapping(value = "/getAllByStageAndUserType/{stage}/{userType}")
+    @GetMapping(value = "/by-stage-and-userType/{stage}/{userType}")
     List<OrderDto> getAllByStageAndUserType(@PathVariable("stage") Stage stage, @PathVariable("userType") UserType userType);
+    @GetMapping(value = "/order-to-deliver/{username}")
+    List<OrderDto> findOrderToDeliver(@PathVariable("username") String username);
 }
