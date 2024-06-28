@@ -5,16 +5,17 @@ public enum Status {
     RETURN,
     REVIEWING,
     WAITING,
-    NOANSWER,
+    NO_ANSWER,
     REFUSE,
     CONFIRMED,
     EXPEDITION,
     PREPARATION,
     DELIVER,
     POSTPONED,
-    INTRANSIT,
+    IN_TRANSIT,
     CANCEL,
-    WAITINGLOAD,
-    OUTSTOCK,
-    INPROGRESS
+    WAITING_LOAD,
+    OUT_STOCK,
+    IN_PROGRESS,
+    DONE
 }
