@@ -247,4 +247,25 @@ public class OrderService implements IBaseService<Order, OrderDto> {
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();
     }
+
+    public List<OrderDto> getAllOrdersConfirm() {
+        return orderRepository.getAllByStage(Stage.CONFIRMATION)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllOrdersDeliver() {
+        return orderRepository.getAllByStage(Stage.SHIPPING)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllOrdersReturn() {
+        return orderRepository.getAllByStage(Stage.RETURN)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
 }

@@ -85,4 +85,19 @@ public class OrderController implements OrderApi {
     public List<OrderDto> findOrderToDeliver(String username) {
         return orderService.findOrderToDeliver(username);
     }
+
+    @Override
+    public List<OrderDto> getAllOrdersConfirm() {
+        return orderService.getAllOrdersConfirm();
+    }
+
+    @Override
+    public List<OrderDto> getAllOrdersDeliver() {
+        return orderService.getAllOrdersDeliver();
+    }
+
+    @Override
+    public List<OrderDto> getAllOrdersReturn() {
+        return orderService.getAllOrdersReturn();
+    }
 }
