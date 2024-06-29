@@ -119,6 +119,79 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         return dashboardBean;
     }
 
+    public DashboardBean dashStateAllOrder() {
+        List<WalletDto> walletDtos = walletService.findAll();
+        List<OrderDto> orders = findAll();
+
+        Date dateOfLastConfirmation = orderRepository.getDateOfLastConfirmation(Stage.CONFIRMATION);
+        Date dateOfLastDelivered = orderRepository.getDateOfLastDelivered(Stage.SHIPPING);
+        Date dateOfLastReturn = orderRepository.getDateOfLastReturn(Stage.RETURN);
+
+        dashboardBean.setTotalSales(walletDtos.stream().mapToDouble(WalletDto::getSold).sum());
+        dashboardBean.setCurrentMonthOrderCount((int) countOrdersForCurrentMonth(orders));
+        dashboardBean.setCurrentDayOrderCount((int) countOrdersForCurrentDay(orders));
+        dashboardBean.setOrdersRejectedInConfirmation((int) countOrdersByStatusAndStage(orders, Status.CANCEL, Stage.CONFIRMATION));
+        dashboardBean.setOrdersRejectedInDelivery((int) countOrdersByStatusAndStage(orders, Status.CANCEL, Stage.SHIPPING));
+        dashboardBean.setOrdersInProgress((int) countOrdersByStatus(orders, Status.IN_PROGRESS));
+        dashboardBean.setOrdersNotTreated((int) countOrdersByStatus(orders, Status.PENDING));
+        dashboardBean.setOrdersReturned((int) countOrdersByStatus(orders, Status.RETURN));
+        dashboardBean.setOrdersValidated((int) countOrdersByStatus(orders, Status.CONFIRMED));
+        dashboardBean.setOrdersToConfirm((int) countOrdersByStatusAndStage(orders, Status.WAITING, Stage.CONFIRMATION));
+        if (dateOfLastConfirmation != null)
+            dashboardBean.setDateOrdersToConfirm(calculateDateDifferenceInDays(dateOfLastConfirmation));
+        dashboardBean.setOrdersToDeliver((int) countOrdersByStatusAndStage(orders, Status.WAITING, Stage.SHIPPING));
+        if (dateOfLastDelivered != null)
+            dashboardBean.setDateOrdersToDeliver(calculateDateDifferenceInDays(dateOfLastDelivered));
+        dashboardBean.setOrdersToReturn((int) countOrdersByStatusAndStage(orders, Status.WAITING, Stage.RETURN));
+        if (dateOfLastReturn != null)
+            dashboardBean.setDateOrdersToReturn(calculateDateDifferenceInDays(dateOfLastReturn));
+        return dashboardBean;
+    }
+
+    private long countOrdersByStatusAndStage(List<OrderDto> orders, Status status, Stage stage) {
+        return orders.stream()
+                .filter(orderDto -> orderDto.getStatus().equals(status) && orderDto.getStage().equals(stage))
+                .count();
+    }
+
+    private long countOrdersByStatus(List<OrderDto> orders, Status status) {
+        return orders.stream()
+                .filter(orderDto -> orderDto.getStatus().equals(status))
+                .count();
+    }
+
+    private long countOrdersForCurrentMonth(List<OrderDto> orders) {
+        Calendar currentCalendar = Calendar.getInstance();
+        return orders.stream()
+                .filter(orderDto -> {
+                    Calendar orderCalendar = Calendar.getInstance();
+                    orderCalendar.setTime(orderDto.getOrderDate());
+                    return orderCalendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH)
+                            && orderCalendar.get(Calendar.YEAR) == currentCalendar.get(Calendar.YEAR);
+                })
+                .count();
+    }
+
+    private long countOrdersForCurrentDay(List<OrderDto> orders) {
+        Date currentDate = Calendar.getInstance().getTime();
+        return orders.stream()
+                .filter(orderDto -> isSameDay(orderDto.getOrderDate(), currentDate))
+                .count();
+    }
+
+    private boolean isSameDay(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private int calculateDateDifferenceInDays(Date startDate) {
+        return (int) ((new Date().getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
     @Override
     public List<OrderDto> findAll() {
         return orderRepository.findAll()
@@ -170,6 +243,27 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     public List<OrderDto> findOrderToDeliver(String username) {
         UserDto userDto = userService.findByUsername(username);
         return orderRepository.findOrderToDeliver(userDto.getCity())
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllOrdersConfirm() {
+        return orderRepository.getAllByStage(Stage.CONFIRMATION)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllOrdersDeliver() {
+        return orderRepository.getAllByStage(Stage.SHIPPING)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllOrdersReturn() {
+        return orderRepository.getAllByStage(Stage.RETURN)
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();
