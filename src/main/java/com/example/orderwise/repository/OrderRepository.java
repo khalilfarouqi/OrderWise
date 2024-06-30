@@ -3,6 +3,7 @@ package com.example.orderwise.repository;
 import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.City;
 import com.example.orderwise.entity.enums.Stage;
+import com.example.orderwise.entity.enums.Status;
 import com.example.orderwise.entity.enums.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -39,4 +40,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> getAllByStageAndUserType(@Param("stage") Stage stage,@Param("userType") UserType userType);
     @Query("SELECT o FROM Order o JOIN o.cart c JOIN c.customer cu JOIN c.items i JOIN i.product p JOIN p.seller u WHERE o.status = 'WAITING' AND u.userType = 'DELIVERY_BOY' AND cu.city = :deliverCity")
     List<Order> findOrderToDeliver(@Param("deliverCity") City deliverCity);
+
+    int countByStageAndStatus(Stage stage, Status status);
+    int countByConfirmationBy(String confirmedName);
+    int countByConfirmationByAndConfirmationDate_YearAndConfirmationDate_MonthAndConfirmationDate_Day(String confirmationName, int year, int month, int day);
+    int countByConfirmationByAndConfirmationDate_YearAndConfirmationDate_Month(String confirmationName, int year, int month);
+    int countByNoAnswerByAndStageAndStatus(String confirmationName,Stage stage, Status status);
+    int countByConfirmationByAndStageAndStatus(String confirmationName, Stage stage, Status status);
 }
