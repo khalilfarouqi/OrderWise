@@ -47,4 +47,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     int countByConfirmationByAndConfirmationDate_YearAndConfirmationDate_Month(String confirmationName, int year, int month);
     int countByNoAnswerByAndStageAndStatus(String confirmationName,Stage stage, Status status);
     int countByConfirmationByAndStageAndStatus(String confirmationName, Stage stage, Status status);
+    int countByConfirmationByAndStageNotOrStageNot(String confirmationName, Stage stageP, Stage stageS);
 }
