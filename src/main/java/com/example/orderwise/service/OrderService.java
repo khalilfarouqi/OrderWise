@@ -1,6 +1,7 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.common.dto.UserDto;
@@ -33,6 +34,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     private final WalletService walletService;
 
     private final DashboardBean dashboardBean = new DashboardBean();
+    private final ConfirmationDashboardStatsBean confirmationDashboardStatsBean = new ConfirmationDashboardStatsBean();
     private final UserService userService;
 
     @Override
