@@ -19,9 +19,12 @@ public class OrderDto implements Serializable {
     private double totalPrice;
     private Date orderDate;
     private Date confirmationDate;
+    private String confirmationBy;
     private Date deliveryDate;
+    private String deliveredBy;
     private Date deliveredDate;
     private Date returnDate;
+    private String returnedBy;
     private Date returnHomeDate;
     private int trackingCode;
     private Stage stage;

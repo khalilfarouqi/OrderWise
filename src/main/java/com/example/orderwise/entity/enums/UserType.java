@@ -6,6 +6,6 @@ public enum UserType {
     DELIVERY_BOY,
     DELIVERY_BOY_IN_CITY,
     DELIVERY_BOY_BY_CITY,
-    CONFIRMATION,
+    CONFIRMED,
     NEW_USER
 }
