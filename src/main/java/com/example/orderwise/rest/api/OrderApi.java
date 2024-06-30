@@ -1,5 +1,6 @@
 package com.example.orderwise.rest.api;
 
+import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.enums.Stage;
@@ -26,6 +27,8 @@ public interface OrderApi {
     List<OrderDto> getOrderBySellerUsername(@PathVariable("username") String username);
     @GetMapping(value = "/dashboard-state/{username}")
     DashboardBean dashState(@PathVariable("username") String username);
+    @GetMapping(value = "/confirmation-dashboard-state/{username}")
+    ConfirmationDashboardStatsBean confirmationDashState(@PathVariable("username") String username);
     @GetMapping(value = "/dashboard-state")
     DashboardBean dashStateAllOrder();
     @GetMapping(value = "/getAll")

@@ -119,6 +119,8 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         return dashboardBean;
     }
 
+    public ConfirmationDashboardStatsBean confirmationDashState(String username) {
+    }
     public DashboardBean dashStateAllOrder() {
         List<WalletDto> walletDtos = walletService.findAll();
         List<OrderDto> orders = findAll();
