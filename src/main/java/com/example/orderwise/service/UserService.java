@@ -236,4 +236,8 @@ public class UserService implements IBaseService<User, UserDto> {
     public int countByUserType(UserType userType) {
         return userRepository.countByUserType(userType);
     }
+
+    public int countByConfirmedBy(String confirmedBy) {
+        return userRepository.countByConfirmedBy(confirmedBy);
+    }
 }
