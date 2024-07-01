@@ -27,6 +27,9 @@ public class UserDto implements Serializable {
     private String cin;
     private String tel;
     private String image;
+
+    private String confirmedBy;
+
     private City city;
     private Gender gender;
     private Role role;
