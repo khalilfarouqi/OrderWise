@@ -55,4 +55,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Date getLastDateOrdersToConfirm(@Param("confirmationBy") String confirmationBy);
     @Query("select o.returnDate from Order o where o.confirmationBy = :confirmationBy order by o.returnDate desc")
     Date getLastDateOrdersToReturn(@Param("confirmationBy") String confirmationBy);
+
+    List<Order> getAllByConfirmationByOrReturnedByOrNoAnswerBy(String confirmationBy, String deliveredBy, String returnedBy);
+
+    List<Order> getAllByHoldToOrConfirmationByAndStage(String holdTo, String confirmationBy, Stage stage);
 }
