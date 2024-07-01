@@ -29,6 +29,7 @@ public class Order {
     private Date returnHomeDate;
     private int trackingCode;
     private Date noAnswerDate;
+    private String holdTo;
     private String noAnswerBy;
     private String confirmationBy;
     private String deliveredBy;

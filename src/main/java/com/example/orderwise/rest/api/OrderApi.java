@@ -1,6 +1,7 @@
 package com.example.orderwise.rest.api;
 
 import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
+import com.example.orderwise.bean.ConfirmedTreatedBean;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.enums.Stage;
@@ -57,4 +58,8 @@ public interface OrderApi {
     List<OrderDto> getAllByStageAndUserType(@PathVariable("stage") Stage stage, @PathVariable("userType") UserType userType);
     @GetMapping(value = "/order-to-deliver/{username}")
     List<OrderDto> findOrderToDeliver(@PathVariable("username") String username);
+    @GetMapping(value = "/confirmed-treated/{username}")
+    List<ConfirmedTreatedBean> getConfirmedTreated(@PathVariable("username") String username);
+    @GetMapping(value = "/by-confirmed/{username}")
+    List<OrderDto> getOrdersConfirmByConfirmed(@PathVariable("username") String username);
 }

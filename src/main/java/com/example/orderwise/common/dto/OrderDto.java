@@ -32,6 +32,7 @@ public class OrderDto implements Serializable {
 
     private Date noAnswerDate;
     private String noAnswerBy;
+    private String holdTo;
 
     private CustomerDto customer;
     private CartDto cart;

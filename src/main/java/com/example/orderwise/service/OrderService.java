@@ -2,6 +2,7 @@ package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
+import com.example.orderwise.bean.ConfirmedTreatedBean;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.common.dto.UserDto;
@@ -19,10 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -297,6 +296,46 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     public List<OrderDto> getAllOrdersReturn() {
         return orderRepository.getAllByStage(Stage.RETURN)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<ConfirmedTreatedBean> getConfirmedTreated(String username) {
+        List<OrderDto> orderDtos = orderRepository.getAllByConfirmationByOrReturnedByOrNoAnswerBy(username, username, username)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+
+        return orderDtos.stream()
+                .map(orderDto -> {
+                    ConfirmedTreatedBean confirmedTreatedBean = new ConfirmedTreatedBean();
+                    confirmedTreatedBean.setTrackingCode(orderDto.getTrackingCode());
+
+                    switch (orderDto.getStatus()) {
+                        case CONFIRMED:
+                            confirmedTreatedBean.setTreatedDate(orderDto.getConfirmationDate());
+                            break;
+                        case RETURN:
+                            confirmedTreatedBean.setTreatedDate(orderDto.getReturnDate());
+                            break;
+                        case NO_ANSWER:
+                            confirmedTreatedBean.setTreatedDate(orderDto.getNoAnswerDate());
+                            break;
+                        default:
+                            confirmedTreatedBean.setTreatedDate(null);
+                    }
+
+                    confirmedTreatedBean.setStage(orderDto.getStage());
+                    confirmedTreatedBean.setStatus(orderDto.getStatus());
+                    confirmedTreatedBean.setTotalPrice(orderDto.getTotalPrice());
+                    return confirmedTreatedBean;
+                })
+                .toList();
+    }
+
+    public List<OrderDto> getOrdersConfirmByConfirmed(String username) {
+        return orderRepository.getAllByHoldToOrConfirmationByAndStage(username, username, Stage.CONFIRMATION)
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();
