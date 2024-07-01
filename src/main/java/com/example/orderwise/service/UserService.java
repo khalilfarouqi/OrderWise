@@ -240,4 +240,11 @@ public class UserService implements IBaseService<User, UserDto> {
     public int countByConfirmedBy(String confirmedBy) {
         return userRepository.countByConfirmedBy(confirmedBy);
     }
+
+    public List<UserDto> getAllUsersToConfirm() {
+        return userRepository.getAllByUserType(UserType.NEW_USER)
+                .stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .toList();
+    }
 }
