@@ -1,5 +1,6 @@
 package com.example.orderwise.rest.controller;
 
+import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
 import com.example.orderwise.bean.DashboardBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.enums.Stage;
@@ -50,6 +51,10 @@ public class OrderController implements OrderApi {
 
     public DashboardBean dashState(String username) {
         return orderService.dashState(username);
+    }
+
+    public ConfirmationDashboardStatsBean confirmationDashState(String username) {
+        return orderService.confirmationDashState(username);
     }
 
     public DashboardBean dashStateAllOrder() {

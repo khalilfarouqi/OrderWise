@@ -26,6 +26,9 @@ public class User {
     private String cin;
     private String tel;
     private String image;
+
+    private String confirmedBy;
+
     @Enumerated(EnumType.STRING)
     private City city;
     @Enumerated(EnumType.STRING)

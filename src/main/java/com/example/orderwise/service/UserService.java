@@ -8,6 +8,7 @@ import com.example.orderwise.common.dto.NotificationGroupDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.User;
 import com.example.orderwise.entity.enums.NotificationType;
+import com.example.orderwise.entity.enums.UserType;
 import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.UserRepository;
@@ -230,5 +231,13 @@ public class UserService implements IBaseService<User, UserDto> {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
+    }
+
+    public int countByUserType(UserType userType) {
+        return userRepository.countByUserType(userType);
+    }
+
+    public int countByConfirmedBy(String confirmedBy) {
+        return userRepository.countByConfirmedBy(confirmedBy);
     }
 }

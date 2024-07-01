@@ -30,6 +30,9 @@ public class OrderDto implements Serializable {
     private Stage stage;
     private Status status;
 
+    private Date noAnswerDate;
+    private String noAnswerBy;
+
     private CustomerDto customer;
     private CartDto cart;
 
