@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -122,7 +123,35 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     }
 
     public ConfirmationDashboardStatsBean confirmationDashState(String username) {
+        LocalDate currentDate = LocalDate.now();
+
+        Date lastDateOrdersToConfirm = orderRepository.getLastDateOrdersToConfirm(username);
+        Date lastDateOrdersToReturn = orderRepository.getLastDateOrdersToReturn(username);
+
+        confirmationDashboardStatsBean.setOrderTreated(orderRepository.countByConfirmationBy(username));
+        confirmationDashboardStatsBean.setOrderTreatedThisDay(orderRepository.countOrderTreatedThisDay(username, currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth()));
+        confirmationDashboardStatsBean.setOrderTreatedThisMonth(orderRepository.countOrderTreatedThisMonth(username, currentDate.getYear(), currentDate.getMonthValue()));
+        confirmationDashboardStatsBean.setAccountConfirmed(userService.countByConfirmedBy(username));
+
+        confirmationDashboardStatsBean.setOrderNotTreated(orderRepository.countByStageAndStatus(Stage.CONFIRMATION, Status.PENDING));
+        confirmationDashboardStatsBean.setOrderNotAnswerInConfirmation(orderRepository.countByNoAnswerByAndStageOrStageAndStatus(username, Stage.CONFIRMATION, Stage.RETURN, Status.NO_ANSWER));
+        confirmationDashboardStatsBean.setOrderRejectedInConfirmation(orderRepository.countByConfirmationByAndStageAndStatus(username, Stage.CONFIRMATION, Status.REFUSE));
+        confirmationDashboardStatsBean.setOrderValidatedInConfirmation(orderRepository.countByConfirmationByAndStageNotOrStageNot(username, Stage.FAIL, Stage.CONFIRMATION));
+
+        confirmationDashboardStatsBean.setOrdersToConfirm(orderRepository.countByNoAnswerByAndStageAndStatus(username, Stage.CONFIRMATION, Status.NO_ANSWER));
+        if (lastDateOrdersToConfirm != null)
+            confirmationDashboardStatsBean.setDateOrdersToConfirm(calculateDateDifferenceInDays(orderRepository.getLastDateOrdersToConfirm(username)));
+
+        confirmationDashboardStatsBean.setOrdersToReturn(orderRepository.countByNoAnswerByAndStageAndStatus(username, Stage.CONFIRMATION, Status.RETURN));
+        if (lastDateOrdersToReturn != null)
+            confirmationDashboardStatsBean.setDateOrdersToReturn(calculateDateDifferenceInDays(orderRepository.getLastDateOrdersToReturn(username)));
+
+        confirmationDashboardStatsBean.setAccountToConfirm(userService.countByUserType(UserType.NEW_USER));
+        confirmationDashboardStatsBean.setDateAccountToConfirm(0);
+
+        return confirmationDashboardStatsBean;
     }
+
     public DashboardBean dashStateAllOrder() {
         List<WalletDto> walletDtos = walletService.findAll();
         List<OrderDto> orders = findAll();
