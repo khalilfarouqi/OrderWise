@@ -43,9 +43,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     int countByStageAndStatus(Stage stage, Status status);
     int countByConfirmationBy(String confirmedName);
-    int countByConfirmationByAndConfirmationDate_YearAndConfirmationDate_MonthAndConfirmationDate_Day(String confirmationName, int year, int month, int day);
-    int countByConfirmationByAndConfirmationDate_YearAndConfirmationDate_Month(String confirmationName, int year, int month);
+    @Query("select count(o) FROM Order o WHERE o.confirmationBy = :confirmationName AND year(o.confirmationDate) = :year AND month(o.confirmationDate) = :month AND day(o.confirmationDate) = :day")
+    int countOrderTreatedThisDay(@Param("confirmationName") String confirmationName, @Param("year") int year, @Param("month") int month, @Param("day") int day);
+    @Query("select count(o) FROM Order o WHERE o.confirmationBy = :confirmationName AND year(o.confirmationDate) = :year AND month(o.confirmationDate) = :month")
+    int countOrderTreatedThisMonth(@Param("confirmationName") String confirmationName, @Param("year") int year, @Param("month") int month);
+    int countByNoAnswerByAndStageOrStageAndStatus(String confirmationName,Stage stage1,Stage stage2, Status status);
     int countByNoAnswerByAndStageAndStatus(String confirmationName,Stage stage, Status status);
     int countByConfirmationByAndStageAndStatus(String confirmationName, Stage stage, Status status);
     int countByConfirmationByAndStageNotOrStageNot(String confirmationName, Stage stageP, Stage stageS);
+    @Query("select o.confirmationDate from Order o where o.confirmationBy = :confirmationBy order by o.confirmationDate desc")
+    Date getLastDateOrdersToConfirm(@Param("confirmationBy") String confirmationBy);
+    @Query("select o.returnDate from Order o where o.confirmationBy = :confirmationBy order by o.returnDate desc")
+    Date getLastDateOrdersToReturn(@Param("confirmationBy") String confirmationBy);
 }
