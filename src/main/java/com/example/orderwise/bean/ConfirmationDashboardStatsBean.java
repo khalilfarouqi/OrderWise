@@ -11,7 +11,7 @@ public class ConfirmationDashboardStatsBean {
     private int orderTreated;
     private int orderTreatedThisDay;
     private int orderTreatedThisMonth;
-    private int accountToConfirmed;
+    private int accountConfirmed;
     private int orderNotTreated;
     private int orderNotAnswerInConfirmation;
     private int orderRejectedInConfirmation;
