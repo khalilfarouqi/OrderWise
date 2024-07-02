@@ -18,4 +18,8 @@ public class JsonProperties {
     private String demandOfMoney;
     private String demandOfMoneyAccepted;
     private String demandOfMoneyRefuser;
+    private String notificationOfConfirmation;
+    private String notificationOfReject;
+    private String bodyMailOfConfirmation;
+    private String bodyMailOfReject;
 }

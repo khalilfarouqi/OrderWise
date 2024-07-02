@@ -37,4 +37,10 @@ public interface UserApi {
     ResponseEntity<Map<String, String>> uploadProfileImage(@RequestParam("file") MultipartFile file);
     @PostMapping("/change-password")
     void changePassword(@RequestBody ChangePasswordRequest request);
+    @GetMapping(value = "/getAllToConfirm")
+    List<UserDto> getAllUsersToConfirm();
+    @PutMapping("/refuse")
+    ResponseEntity<UserDto> refuse(@RequestBody UserDto user);
+    @PutMapping("/valide")
+    ResponseEntity<UserDto> valide(@RequestBody UserDto user);
 }

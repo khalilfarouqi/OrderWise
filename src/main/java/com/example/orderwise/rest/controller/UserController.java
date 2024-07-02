@@ -63,4 +63,20 @@ public class UserController implements UserApi {
         String username = request.getUsername();
         userService.changePassword(username, request);
     }
+
+    @Override
+    public List<UserDto> getAllUsersToConfirm() {
+        return userService.getAllUsersToConfirm();
+    }
+
+    @Override
+    public ResponseEntity<UserDto> refuse(UserDto user) {
+        return userService.refusee(user);
+    }
+
+    @Override
+    public ResponseEntity<UserDto> valide(UserDto user) {
+        return userService.validee(user);
+    }
+
 }
