@@ -39,4 +39,8 @@ public interface UserApi {
     void changePassword(@RequestBody ChangePasswordRequest request);
     @GetMapping(value = "/getAllToConfirm")
     List<UserDto> getAllUsersToConfirm();
+    @PutMapping("/refuse")
+    ResponseEntity<UserDto> refuse(@RequestBody UserDto user);
+    @PutMapping("/valide")
+    ResponseEntity<UserDto> valide(@RequestBody UserDto user);
 }

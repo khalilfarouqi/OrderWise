@@ -7,12 +7,14 @@ import com.example.orderwise.common.dto.NotificationDto;
 import com.example.orderwise.common.dto.NotificationGroupDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.User;
+import com.example.orderwise.entity.enums.Motif;
 import com.example.orderwise.entity.enums.NotificationType;
 import com.example.orderwise.entity.enums.UserType;
 import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.UserRepository;
 import com.example.orderwise.exception.BusinessException;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -143,6 +145,85 @@ public class UserService implements IBaseService<User, UserDto> {
             return modelMapper.map(userRepository.save(modelMapper.map(user.get(), User.class)), UserDto.class);
         } else {
             throw new BusinessException(String.format("User not found [%s]", dto.getUsername()));
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<UserDto> refusee(UserDto dto) {
+        UserDto userDto = update(dto);
+        ResponseEntity<String> notificationResponse;
+        try {
+            notificationResponse = sendNotificationsByMotif(userDto, Motif.REFUSEE);
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+        if (notificationResponse.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<UserDto> validee(UserDto dto) {
+        UserDto userDto = update(dto);
+        ResponseEntity<String> notificationResponse;
+        try {
+            notificationResponse = sendNotificationsByMotif(userDto, Motif.VALIDEE);
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+        if (notificationResponse.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    public ResponseEntity<String> sendNotificationsByMotif(UserDto dto, Motif motif) {
+        String subjectByMotif;
+        ResponseEntity<String> emailResponse;
+        try {
+            if (motif.equals(Motif.VALIDEE)) {
+                subjectByMotif = jsonProperties.getNotificationOfConfirmation().replaceAll("[\",]", "");
+                emailResponse = sendConfirmationMail(subjectByMotif, dto);
+            } else if (motif.equals(Motif.REFUSEE)) {
+                subjectByMotif = jsonProperties.getNotificationOfReject().replaceAll("[\",]", "");
+                emailResponse = sendRefuseeMail(subjectByMotif, dto);
+            } else {
+                throw new IllegalArgumentException("Unsupported motif: " + motif);
+            }
+            if (emailResponse.getStatusCode() != HttpStatus.OK) {
+                return emailResponse;
+            }
+            smsService.sendSms(formatPhoneNumber(dto.getTel()), subjectByMotif);
+            return ResponseEntity.ok("Notifications sent successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send notifications.");
+        }
+    }
+
+    public ResponseEntity<String> sendConfirmationMail(String subject, UserDto userDto) throws Exception {
+        Map<String, Object> model = new HashMap<>();
+        model.put("clientFirstName", userDto.getFirstname());
+        model.put("clientUsername", userDto.getUsername());
+        model.put("clientEmail", userDto.getEmail());
+
+        try {
+            mailService.sendEmail(userDto.getEmail(), subject, model, "confirmation_email.ftlh");
+            return ResponseEntity.ok("Confirmation email sent successfully.");
+        } catch (MessagingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send confirmation email.");
+        }
+    }
+
+    public ResponseEntity<String> sendRefuseeMail(String subject, UserDto userDto) throws Exception {
+        Map<String, Object> model = new HashMap<>();
+        model.put("clientFirstName", userDto.getFirstname());
+
+        try {
+            mailService.sendEmail(userDto.getEmail(), subject, model, "refused_account_email.ftlh");
+            return ResponseEntity.ok("Confirmation email sent successfully.");
+        } catch (MessagingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send confirmation email.");
         }
     }
 
