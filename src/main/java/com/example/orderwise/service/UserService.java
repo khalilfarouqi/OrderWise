@@ -149,8 +149,26 @@ public class UserService implements IBaseService<User, UserDto> {
     }
 
     @Transactional
+    public UserDto updateConfirmation(UserDto dto) {
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new BusinessException(String.format("User not found [%s]", dto.getUsername())));
+
+        user.setFirstname(dto.getFirstname());
+        user.setLastname(dto.getLastname());
+        user.setEmail(dto.getEmail());
+        user.setCin(dto.getCin());
+        user.setTel(dto.getTel());
+        user.setCity(dto.getCity());
+        user.setGender(dto.getGender());
+        user.setUserType(dto.getUserType());
+
+        User updatedUser = userRepository.save(user);
+        return modelMapper.map(updatedUser, UserDto.class);
+    }
+
+    @Transactional
     public ResponseEntity<UserDto> refusee(UserDto dto) {
-        UserDto userDto = update(dto);
+        UserDto userDto = updateConfirmation(dto);
         ResponseEntity<String> notificationResponse;
         try {
             notificationResponse = sendNotificationsByMotif(userDto, Motif.REFUSEE);
@@ -165,7 +183,7 @@ public class UserService implements IBaseService<User, UserDto> {
 
     @Transactional
     public ResponseEntity<UserDto> validee(UserDto dto) {
-        UserDto userDto = update(dto);
+        UserDto userDto = updateConfirmation(dto);
         ResponseEntity<String> notificationResponse;
         try {
             notificationResponse = sendNotificationsByMotif(userDto, Motif.VALIDEE);
