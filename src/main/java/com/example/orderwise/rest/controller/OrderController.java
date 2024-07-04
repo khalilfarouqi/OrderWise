@@ -127,4 +127,9 @@ public class OrderController implements OrderApi {
     public List<OrderDto> getAllOrdersDeliveredByDeliveryBoy(String username) {
         return orderService.getAllOrdersDeliveredByDeliveryBoy(username);
     }
+
+    @Override
+    public List<OrderDto> getAllOrdersReturnedByDeliveryBoy(String username) {
+        return orderService.getAllOrdersReturnedByDeliveryBoy(username);
+    }
 }

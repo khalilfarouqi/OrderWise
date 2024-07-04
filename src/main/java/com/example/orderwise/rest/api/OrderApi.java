@@ -67,4 +67,6 @@ public interface OrderApi {
     DeliveryBoyDashStatsBean deliveryBoyDashState(@PathVariable("username") String username);
     @GetMapping(value = "/delivered-by-delivery-boy/{username}")
     List<OrderDto> getAllOrdersDeliveredByDeliveryBoy(@PathVariable("username") String username);
+    @GetMapping(value = "/returned-by-delivery-boy/{username}")
+    List<OrderDto> getAllOrdersReturnedByDeliveryBoy(@PathVariable("username") String username);
 }
