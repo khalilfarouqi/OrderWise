@@ -4,6 +4,7 @@ import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
 import com.example.orderwise.bean.ConfirmedTreatedBean;
 import com.example.orderwise.bean.DashboardBean;
+import com.example.orderwise.bean.DeliveryBoyDashStatsBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.common.dto.WalletDto;
@@ -35,6 +36,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     private final DashboardBean dashboardBean = new DashboardBean();
     private final ConfirmationDashboardStatsBean confirmationDashboardStatsBean = new ConfirmationDashboardStatsBean();
+    private final DeliveryBoyDashStatsBean deliveryBoyDashStatsBean = new DeliveryBoyDashStatsBean();
     private final UserService userService;
 
     @Override
@@ -149,6 +151,32 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         confirmationDashboardStatsBean.setDateAccountToConfirm(0);
 
         return confirmationDashboardStatsBean;
+    }
+
+    public DeliveryBoyDashStatsBean deliveryBoyDashState(String username) {
+        List<OrderDto> orderDtoList = orderRepository.getAllByDeliveredByAndDeliveredDate(username, new Date())
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+        WalletDto walletDto = walletService.getWalletByUser(username);
+        deliveryBoyDashStatsBean.setWalletToday(orderDtoList.stream()
+                .mapToDouble(OrderDto::getTotalPrice)
+                .sum());
+        deliveryBoyDashStatsBean.setMoneyDepose(walletDto.getAmountDeposited());
+        deliveryBoyDashStatsBean.setMoneyPacket(walletDto.getAmountCredited());
+        deliveryBoyDashStatsBean.setOrderTreatedToday(orderRepository.countByDeliveredByAndDeliveredDateAndStageAndStatusOrStatus(username, new Date(), Stage.SHIPPING, Status.DONE, Status.CANCEL));
+        deliveryBoyDashStatsBean.setOrderNoTreatedToday(orderRepository.countByHoldToAndDeliveryDate(username, new Date()));// i see
+        deliveryBoyDashStatsBean.setOrderNotTreated(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
+        deliveryBoyDashStatsBean.setOrderLivrer(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.DONE));
+        deliveryBoyDashStatsBean.setOrderAnnuler(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.CANCEL));
+        deliveryBoyDashStatsBean.setOrderNotResponse(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.NO_ANSWER));
+        deliveryBoyDashStatsBean.setOrderToTraite(orderRepository.countByStageAndStatusOrStatus(Stage.SHIPPING, Status.PENDING, Status.RETURN));
+        deliveryBoyDashStatsBean.setDateOrderToTraite(0);// i see
+        deliveryBoyDashStatsBean.setOrderToDeliver(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
+        deliveryBoyDashStatsBean.setDateOrderToDeliver(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToDeliver(username)));
+        deliveryBoyDashStatsBean.setOrderToReturn(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.RETURN));
+        deliveryBoyDashStatsBean.setDateOrderToReturn(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToReturn(username)));
+        return deliveryBoyDashStatsBean;
     }
 
     public DashboardBean dashStateAllOrder() {

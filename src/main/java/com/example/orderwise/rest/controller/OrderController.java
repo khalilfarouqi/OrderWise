@@ -3,6 +3,7 @@ package com.example.orderwise.rest.controller;
 import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
 import com.example.orderwise.bean.ConfirmedTreatedBean;
 import com.example.orderwise.bean.DashboardBean;
+import com.example.orderwise.bean.DeliveryBoyDashStatsBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.UserType;
@@ -100,6 +101,11 @@ public class OrderController implements OrderApi {
     @Override
     public List<OrderDto> getOrdersConfirmByConfirmed(String username) {
         return orderService.getOrdersConfirmByConfirmed(username);
+    }
+
+    @Override
+    public DeliveryBoyDashStatsBean deliveryBoyDashState(String username) {
+        return orderService.deliveryBoyDashState(username);
     }
 
     @Override
