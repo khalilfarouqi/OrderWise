@@ -75,4 +75,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> getAllByDeliveredByOrderByDeliveredDateDesc(String deliverBy);
     List<Order> getAllByReturnedByOrderByReturnDateDesc(String deliverBy);
+
+    List<Order> findAllByDeliveredByAndReturnedByOrderByDeliveredDateDescReturnDateDesc(String deliverBy, String returnedBy);
 }

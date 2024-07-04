@@ -154,28 +154,30 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     }
 
     public DeliveryBoyDashStatsBean deliveryBoyDashState(String username) {
-        List<OrderDto> orderDtoList = orderRepository.getAllByDeliveredByAndDeliveredDate(username, new Date())
-                .stream()
-                .map(order -> modelMapper.map(order, OrderDto.class))
-                .toList();
         WalletDto walletDto = walletService.getWalletByUser(username);
-        deliveryBoyDashStatsBean.setWalletToday(orderDtoList.stream()
-                .mapToDouble(OrderDto::getTotalPrice)
-                .sum());
-        deliveryBoyDashStatsBean.setMoneyDepose(walletDto.getAmountDeposited());
-        deliveryBoyDashStatsBean.setMoneyPacket(walletDto.getAmountCredited());
-        deliveryBoyDashStatsBean.setOrderTreatedToday(orderRepository.countByDeliveredByAndDeliveredDateAndStageAndStatusOrStatus(username, new Date(), Stage.SHIPPING, Status.DONE, Status.CANCEL));
-        deliveryBoyDashStatsBean.setOrderNoTreatedToday(orderRepository.countByHoldToAndDeliveryDate(username, new Date()));// i see
-        deliveryBoyDashStatsBean.setOrderNotTreated(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
-        deliveryBoyDashStatsBean.setOrderLivrer(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.DONE));
-        deliveryBoyDashStatsBean.setOrderAnnuler(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.CANCEL));
-        deliveryBoyDashStatsBean.setOrderNotResponse(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.NO_ANSWER));
-        deliveryBoyDashStatsBean.setOrderToTraite(orderRepository.countByStageAndStatusOrStatus(Stage.SHIPPING, Status.PENDING, Status.RETURN));
-        deliveryBoyDashStatsBean.setDateOrderToTraite(0);// i see
-        deliveryBoyDashStatsBean.setOrderToDeliver(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
-        deliveryBoyDashStatsBean.setDateOrderToDeliver(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToDeliver(username)));
-        deliveryBoyDashStatsBean.setOrderToReturn(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.RETURN));
-        deliveryBoyDashStatsBean.setDateOrderToReturn(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToReturn(username)));
+        if (walletDto != null) {
+            List<OrderDto> orderDtoList = orderRepository.getAllByDeliveredByAndDeliveredDate(username, new Date())
+                    .stream()
+                    .map(order -> modelMapper.map(order, OrderDto.class))
+                    .toList();
+            deliveryBoyDashStatsBean.setWalletToday(orderDtoList.stream()
+                    .mapToDouble(OrderDto::getTotalPrice)
+                    .sum());
+            deliveryBoyDashStatsBean.setMoneyDepose(walletDto.getAmountDeposited());
+            deliveryBoyDashStatsBean.setMoneyPacket(walletDto.getAmountCredited());
+            deliveryBoyDashStatsBean.setOrderTreatedToday(orderRepository.countByDeliveredByAndDeliveredDateAndStageAndStatusOrStatus(username, new Date(), Stage.SHIPPING, Status.DONE, Status.CANCEL));
+            deliveryBoyDashStatsBean.setOrderNoTreatedToday(orderRepository.countByHoldToAndDeliveryDate(username, new Date()));// i see
+            deliveryBoyDashStatsBean.setOrderNotTreated(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
+            deliveryBoyDashStatsBean.setOrderLivrer(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.DONE));
+            deliveryBoyDashStatsBean.setOrderAnnuler(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.CANCEL));
+            deliveryBoyDashStatsBean.setOrderNotResponse(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.NO_ANSWER));
+            deliveryBoyDashStatsBean.setOrderToTraite(orderRepository.countByStageAndStatusOrStatus(Stage.SHIPPING, Status.PENDING, Status.RETURN));
+            deliveryBoyDashStatsBean.setDateOrderToTraite(0);// i see
+            deliveryBoyDashStatsBean.setOrderToDeliver(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
+            deliveryBoyDashStatsBean.setDateOrderToDeliver(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToDeliver(username)));
+            deliveryBoyDashStatsBean.setOrderToReturn(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.RETURN));
+            deliveryBoyDashStatsBean.setDateOrderToReturn(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToReturn(username)));
+        }
         return deliveryBoyDashStatsBean;
     }
 
@@ -380,6 +382,36 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         return orderRepository.getAllByReturnedByOrderByReturnDateDesc(username)
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<ConfirmedTreatedBean> getDeliveryBoyTreated(String username) {
+        List<OrderDto> orderDtos = orderRepository.findAllByDeliveredByAndReturnedByOrderByDeliveredDateDescReturnDateDesc(username, username)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+
+        return orderDtos.stream()
+                .map(orderDto -> {
+                    ConfirmedTreatedBean confirmedTreatedBean = new ConfirmedTreatedBean();
+                    confirmedTreatedBean.setTrackingCode(orderDto.getTrackingCode());
+
+                    switch (orderDto.getStage()) {
+                        case SHIPPING:
+                            confirmedTreatedBean.setTreatedDate(orderDto.getDeliveredDate());
+                            break;
+                        case RETURN:
+                            confirmedTreatedBean.setTreatedDate(orderDto.getReturnDate());
+                            break;
+                        default:
+                            confirmedTreatedBean.setTreatedDate(null);
+                    }
+
+                    confirmedTreatedBean.setStage(orderDto.getStage());
+                    confirmedTreatedBean.setStatus(orderDto.getStatus());
+                    confirmedTreatedBean.setTotalPrice(orderDto.getTotalPrice());
+                    return confirmedTreatedBean;
+                })
                 .toList();
     }
 }

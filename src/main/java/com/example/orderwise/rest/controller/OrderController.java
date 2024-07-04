@@ -132,4 +132,9 @@ public class OrderController implements OrderApi {
     public List<OrderDto> getAllOrdersReturnedByDeliveryBoy(String username) {
         return orderService.getAllOrdersReturnedByDeliveryBoy(username);
     }
+
+    @Override
+    public List<ConfirmedTreatedBean> getDeliveryBoyTreated(String username) {
+        return orderService.getDeliveryBoyTreated(username);
+    }
 }
