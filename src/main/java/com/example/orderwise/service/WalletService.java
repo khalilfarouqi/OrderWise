@@ -59,4 +59,9 @@ public class WalletService implements IBaseService<Wallet, WalletDto> {
         Optional<Wallet> walletOptional = walletRepository.findBySellerUsername(username);
         return walletOptional.map(wallet -> modelMapper.map(wallet, WalletDto.class)).orElse(null);
     }
+
+    public WalletDto getWalletByUser(String username) {
+        Optional<Wallet> walletOptional = walletRepository.findByUserUsername(username);
+        return walletOptional.map(wallet -> modelMapper.map(wallet, WalletDto.class)).orElse(null);
+    }
 }
