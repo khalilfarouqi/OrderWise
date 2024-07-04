@@ -65,4 +65,6 @@ public interface OrderApi {
     List<OrderDto> getOrdersConfirmByConfirmed(@PathVariable("username") String username);
     @GetMapping(value = "/delivery-boy-dashboard-state/{username}")
     DeliveryBoyDashStatsBean deliveryBoyDashState(@PathVariable("username") String username);
+    @GetMapping(value = "/delivered-by-delivery-boy/{username}")
+    List<OrderDto> getAllOrdersDeliveredByDeliveryBoy(@PathVariable("username") String username);
 }

@@ -72,4 +72,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Date getLastDateOrderToDeliver(@Param("deliverBy") String deliverBy);
     @Query("select o.returnDate from Order o where o.returnedBy = :deliverBy order by o.returnDate desc")
     Date getLastDateOrderToReturn(@Param("deliverBy") String deliverBy);
+
+    List<Order> getAllByDeliveredByOrderByDeliveredDateDesc(String deliverBy);
 }

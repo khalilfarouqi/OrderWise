@@ -368,4 +368,11 @@ public class OrderService implements IBaseService<Order, OrderDto> {
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();
     }
+
+    public List<OrderDto> getAllOrdersDeliveredByDeliveryBoy(String username) {
+        return orderRepository.getAllByDeliveredByOrderByDeliveredDateDesc(username)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
 }
