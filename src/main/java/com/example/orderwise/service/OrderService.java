@@ -4,6 +4,7 @@ import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
 import com.example.orderwise.bean.ConfirmedTreatedBean;
 import com.example.orderwise.bean.DashboardBean;
+import com.example.orderwise.bean.DeliveryBoyDashStatsBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.common.dto.WalletDto;
@@ -35,6 +36,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     private final DashboardBean dashboardBean = new DashboardBean();
     private final ConfirmationDashboardStatsBean confirmationDashboardStatsBean = new ConfirmationDashboardStatsBean();
+    private final DeliveryBoyDashStatsBean deliveryBoyDashStatsBean = new DeliveryBoyDashStatsBean();
     private final UserService userService;
 
     @Override
@@ -149,6 +151,34 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         confirmationDashboardStatsBean.setDateAccountToConfirm(0);
 
         return confirmationDashboardStatsBean;
+    }
+
+    public DeliveryBoyDashStatsBean deliveryBoyDashState(String username) {
+        WalletDto walletDto = walletService.getWalletByUser(username);
+        if (walletDto != null) {
+            List<OrderDto> orderDtoList = orderRepository.getAllByDeliveredByAndDeliveredDate(username, new Date())
+                    .stream()
+                    .map(order -> modelMapper.map(order, OrderDto.class))
+                    .toList();
+            deliveryBoyDashStatsBean.setWalletToday(orderDtoList.stream()
+                    .mapToDouble(OrderDto::getTotalPrice)
+                    .sum());
+            deliveryBoyDashStatsBean.setMoneyDepose(walletDto.getAmountDeposited());
+            deliveryBoyDashStatsBean.setMoneyPacket(walletDto.getAmountCredited());
+            deliveryBoyDashStatsBean.setOrderTreatedToday(orderRepository.countByDeliveredByAndDeliveredDateAndStageAndStatusOrStatus(username, new Date(), Stage.SHIPPING, Status.DONE, Status.CANCEL));
+            deliveryBoyDashStatsBean.setOrderNoTreatedToday(orderRepository.countByHoldToAndDeliveryDate(username, new Date()));// i see
+            deliveryBoyDashStatsBean.setOrderNotTreated(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
+            deliveryBoyDashStatsBean.setOrderLivrer(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.DONE));
+            deliveryBoyDashStatsBean.setOrderAnnuler(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.CANCEL));
+            deliveryBoyDashStatsBean.setOrderNotResponse(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.NO_ANSWER));
+            deliveryBoyDashStatsBean.setOrderToTraite(orderRepository.countByStageAndStatusOrStatus(Stage.SHIPPING, Status.PENDING, Status.RETURN));
+            deliveryBoyDashStatsBean.setDateOrderToTraite(0);// i see
+            deliveryBoyDashStatsBean.setOrderToDeliver(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.PENDING));
+            deliveryBoyDashStatsBean.setDateOrderToDeliver(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToDeliver(username)));
+            deliveryBoyDashStatsBean.setOrderToReturn(orderRepository.countByStageAndStatus(Stage.SHIPPING, Status.RETURN));
+            deliveryBoyDashStatsBean.setDateOrderToReturn(calculateDateDifferenceInDays(orderRepository.getLastDateOrderToReturn(username)));
+        }
+        return deliveryBoyDashStatsBean;
     }
 
     public DashboardBean dashStateAllOrder() {
@@ -338,6 +368,50 @@ public class OrderService implements IBaseService<Order, OrderDto> {
         return orderRepository.getAllByHoldToOrConfirmationByAndStage(username, username, Stage.CONFIRMATION)
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllOrdersDeliveredByDeliveryBoy(String username) {
+        return orderRepository.getAllByDeliveredByOrderByDeliveredDateDesc(username)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<OrderDto> getAllOrdersReturnedByDeliveryBoy(String username) {
+        return orderRepository.getAllByReturnedByOrderByReturnDateDesc(username)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+    }
+
+    public List<ConfirmedTreatedBean> getDeliveryBoyTreated(String username) {
+        List<OrderDto> orderDtos = orderRepository.findAllByDeliveredByAndReturnedByOrderByDeliveredDateDescReturnDateDesc(username, username)
+                .stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .toList();
+
+        return orderDtos.stream()
+                .map(orderDto -> {
+                    ConfirmedTreatedBean confirmedTreatedBean = new ConfirmedTreatedBean();
+                    confirmedTreatedBean.setTrackingCode(orderDto.getTrackingCode());
+
+                    switch (orderDto.getStage()) {
+                        case SHIPPING:
+                            confirmedTreatedBean.setTreatedDate(orderDto.getDeliveredDate());
+                            break;
+                        case RETURN:
+                            confirmedTreatedBean.setTreatedDate(orderDto.getReturnDate());
+                            break;
+                        default:
+                            confirmedTreatedBean.setTreatedDate(null);
+                    }
+
+                    confirmedTreatedBean.setStage(orderDto.getStage());
+                    confirmedTreatedBean.setStatus(orderDto.getStatus());
+                    confirmedTreatedBean.setTotalPrice(orderDto.getTotalPrice());
+                    return confirmedTreatedBean;
+                })
                 .toList();
     }
 }

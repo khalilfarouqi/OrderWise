@@ -59,4 +59,22 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> getAllByConfirmationByOrReturnedByOrNoAnswerBy(String confirmationBy, String deliveredBy, String returnedBy);
 
     List<Order> getAllByHoldToOrConfirmationByAndStage(String holdTo, String confirmationBy, Stage stage);
+
+    List<Order> getAllByDeliveredByAndDeliveredDate(String deliveredBy, Date deliveredDate);
+    int countByDeliveredByAndDeliveredDate(String deliveredBy, Date deliveredDate);
+    int countByDeliveredByAndDeliveredDateAndStageAndStatusOrStatus(String deliveredBy, Date deliveredDate, Stage stage, Status status, Status status2);
+    int countByHoldToAndDeliveryDate(String holdTo, Date deliveryDate);
+    int countByStageAndStatusOrStatus(Stage stage, Status status, Status status2);
+
+    @Query("select o.confirmationDate from Order o where o.confirmationBy = :deliverBy order by o.confirmationDate desc")
+    Date getLastDateOrderToTraite(@Param("deliverBy") String deliverBy);
+    @Query("select o.deliveredDate from Order o where o.deliveredBy = :deliverBy order by o.deliveredDate desc")
+    Date getLastDateOrderToDeliver(@Param("deliverBy") String deliverBy);
+    @Query("select o.returnDate from Order o where o.returnedBy = :deliverBy order by o.returnDate desc")
+    Date getLastDateOrderToReturn(@Param("deliverBy") String deliverBy);
+
+    List<Order> getAllByDeliveredByOrderByDeliveredDateDesc(String deliverBy);
+    List<Order> getAllByReturnedByOrderByReturnDateDesc(String deliverBy);
+
+    List<Order> findAllByDeliveredByAndReturnedByOrderByDeliveredDateDescReturnDateDesc(String deliverBy, String returnedBy);
 }

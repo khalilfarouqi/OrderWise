@@ -3,6 +3,7 @@ package com.example.orderwise.rest.api;
 import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
 import com.example.orderwise.bean.ConfirmedTreatedBean;
 import com.example.orderwise.bean.DashboardBean;
+import com.example.orderwise.bean.DeliveryBoyDashStatsBean;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.UserType;
@@ -62,4 +63,12 @@ public interface OrderApi {
     List<ConfirmedTreatedBean> getConfirmedTreated(@PathVariable("username") String username);
     @GetMapping(value = "/by-confirmed/{username}")
     List<OrderDto> getOrdersConfirmByConfirmed(@PathVariable("username") String username);
+    @GetMapping(value = "/delivery-boy-dashboard-state/{username}")
+    DeliveryBoyDashStatsBean deliveryBoyDashState(@PathVariable("username") String username);
+    @GetMapping(value = "/delivered-by-delivery-boy/{username}")
+    List<OrderDto> getAllOrdersDeliveredByDeliveryBoy(@PathVariable("username") String username);
+    @GetMapping(value = "/returned-by-delivery-boy/{username}")
+    List<OrderDto> getAllOrdersReturnedByDeliveryBoy(@PathVariable("username") String username);
+    @GetMapping(value = "/delivery-boy-treated/{username}")
+    List<ConfirmedTreatedBean> getDeliveryBoyTreated(@PathVariable("username") String username);
 }
