@@ -14,6 +14,7 @@ The Order Management System is a backend web application designed to streamline 
 - **Swagger:** Automatically generating interactive API documentation for better API understanding and testing.
 - **RESTful API:** Building RESTful APIs to facilitate communication between frontend and backend components.
 - **Spring Boot Starter Mail:** Enabling email notifications for user-related actions such as order confirmations.
+- **Infobip:** Integrating Infobip API for sending SMS notifications.
 
 ## Getting Started
 
@@ -22,6 +23,7 @@ The Order Management System is a backend web application designed to streamline 
 - Java Development Kit (JDK) 17
 - Apache Maven (if using for build management)
 - PostgreSQL Server
+- Infobip Account and API Key
 
 ### Installation
 
@@ -29,7 +31,8 @@ The Order Management System is a backend web application designed to streamline 
 2. Navigate to the project directory
 3. Configure PostgreSQL database settings in `application.properties`
 4. Configure email settings in `application.properties`
-5. Build and run the application
+5. Configure Infobip settings in `application.properties`
+6. Build and run the application
 
 ### Usage
 
@@ -37,9 +40,9 @@ The Order Management System is a backend web application designed to streamline 
 2. Integrate the backend with your frontend or API client.
 3. Start managing orders, tracking deliveries, and analyzing performance through API calls.
 
-### Email Notifications
+### Email and SMS Notifications
 
-The system can send email notifications for various user-related actions such as order confirmations. Ensure you have configured the email settings in the `application.properties` file.
+The system can send email notifications for various user-related actions such as order confirmations. Ensure you have configured the email settings in the `application.properties` file. Additionally, the system can send SMS notifications using the Infobip API. Ensure you have configured the Infobip settings in the `application.properties` file.
 
 ## License
 
