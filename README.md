@@ -13,6 +13,7 @@ The Order Management System is a backend web application designed to streamline 
 - **Lombok:** Enhancing productivity by reducing boilerplate code in Java classes.
 - **Swagger:** Automatically generating interactive API documentation for better API understanding and testing.
 - **RESTful API:** Building RESTful APIs to facilitate communication between frontend and backend components.
+- **Spring Boot Starter Mail:** Enabling email notifications for user-related actions such as order confirmations.
 
 ## Getting Started
 
@@ -27,13 +28,18 @@ The Order Management System is a backend web application designed to streamline 
 1. Clone the repository: `git clone https://github.com/khalilfarouqi/OrderWise.git`
 2. Navigate to the project directory
 3. Configure PostgreSQL database settings in `application.properties`
-4. Build and run the application
+4. Configure email settings in `application.properties`
+5. Build and run the application
 
 ### Usage
 
 1. Ensure the backend server is up and running.
 2. Integrate the backend with your frontend or API client.
 3. Start managing orders, tracking deliveries, and analyzing performance through API calls.
+
+### Email Notifications
+
+The system can send email notifications for various user-related actions such as order confirmations. Ensure you have configured the email settings in the `application.properties` file.
 
 ## License
 
