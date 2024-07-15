@@ -46,4 +46,9 @@ infobip:
   apiUrl: https://api.infobip.com/sms/1/text/single
   senderId: 3CA99AB3B566AFEC74FB98187BDE0B8F
 
-
+keycloak:
+  auth-server-url: http://localhost:8080/auth
+  realm: OrderWise
+  resource: OrderWise-BackEnd
+  credentials.secret: 363d6cb6-4b39-498b-bc98-1dfe75bfaaec
+  principal-attribute: admin
