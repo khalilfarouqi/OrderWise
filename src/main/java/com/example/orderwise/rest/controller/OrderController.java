@@ -1,9 +1,6 @@
 package com.example.orderwise.rest.controller;
 
-import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
-import com.example.orderwise.bean.ConfirmedTreatedBean;
-import com.example.orderwise.bean.DashboardBean;
-import com.example.orderwise.bean.DeliveryBoyDashStatsBean;
+import com.example.orderwise.bean.*;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.UserType;
@@ -12,6 +9,7 @@ import com.example.orderwise.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -136,5 +134,10 @@ public class OrderController implements OrderApi {
     @Override
     public List<ConfirmedTreatedBean> getDeliveryBoyTreated(String username) {
         return orderService.getDeliveryBoyTreated(username);
+    }
+
+    @Override
+    public ResponseEntity<TruckingStepBean> getOrderByTruckingCode(int trackingCode) {
+        return orderService.getOrderTruckingStep(trackingCode);
     }
 }
