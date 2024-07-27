@@ -5,6 +5,7 @@ import com.example.orderwise.common.dto.*;
 import com.example.orderwise.entity.*;
 import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.repository.ContactUsRepository;
+import com.example.orderwise.slack.service.SlackMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -26,6 +27,7 @@ public class ContactUsService implements IBaseService<ContactUs, ContactUsDto> {
     private final ModelMapper modelMapper;
 
     private final MailService mailService;
+    private final SlackMessageService slackMessageService;
 
     @Transactional
     @Override
@@ -42,6 +44,8 @@ public class ContactUsService implements IBaseService<ContactUs, ContactUsDto> {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+
+        sendSlackMessage(dto);
 
         return modelMapper.map(contactUsRepository.save(modelMapper.map(dto, ContactUs.class)), ContactUsDto.class);
     }
@@ -74,8 +78,16 @@ public class ContactUsService implements IBaseService<ContactUs, ContactUsDto> {
         return null;
     }
 
-    public void createJiraTicket(ContactMessage message) {
-        JiraRestClient jiraClient = new JiraRestClient("https://yourdomain.atlassian.net", "username", "apiToken");
-        jiraClient.createIssue("PROJECTKEY", "Task", message.getSubject(), message.getBody());
+    public void sendSlackMessage(ContactUsDto message) {
+        try {
+            // Send Slack message
+            String slackMessage = "New contact message received:\n" +
+                    "Name: " + message.getFullName() + "\n" +
+                    "Email: " + message.getEmail() + "\n" +
+                    "Message: " + message.getMessage();
+            slackMessageService.sendSlackMessage(slackMessage);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 }

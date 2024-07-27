@@ -61,13 +61,14 @@ public class UserService implements IBaseService<User, UserDto> {
         sendNotifications(dto);
         encodePassword(dto);
 
+        User savedUser = userRepository.save(modelMapper.map(dto, User.class));
         NotificationGroupDto notificationGroupDto = createNotificationGroup();
+
         notificationGroupDto = notificationGroupService.save(notificationGroupDto);
 
         NotificationDto notificationDto = createNotification(notificationGroupDto, dto);
         notificationService.save(notificationDto);
 
-        User savedUser = userRepository.save(modelMapper.map(dto, User.class));
         return modelMapper.map(savedUser, UserDto.class);
     }
 
@@ -92,7 +93,9 @@ public class UserService implements IBaseService<User, UserDto> {
 
     private void sendNotifications(UserDto dto) {
         try {
-            mailService.sendLoginPasswordMail(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), dto);
+            if (dto.getEmail() != null)
+                mailService.sendLoginPasswordMail(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), dto);
+            if (dto.getTel() != null)
             smsService.sendSms(formatPhoneNumber(dto.getTel()), jsonProperties.getSendPasswordSms().replaceAll("[\",]", ""));
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
