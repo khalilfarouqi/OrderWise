@@ -13,5 +13,5 @@ Merci d'avoir choisi OrderWise. Nous nous réjouissons de vous servir et de vous
 Cordialement,
 
 Khalil farouqi
-CIO
+CEO
 OrderWise

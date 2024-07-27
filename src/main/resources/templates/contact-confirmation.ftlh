@@ -15,5 +15,5 @@
 
 <p>Cordialement,</p>
 <p>Khalil Farouqi</p>
-<p>CIO</p>
+<p>CEO</p>
 <p>OrderWise</p>

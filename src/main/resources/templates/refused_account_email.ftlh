@@ -7,5 +7,5 @@ Merci de votre compréhension.
 Cordialement,
 
 Khalil farouqi
-CIO
+CEO
 OrderWise
