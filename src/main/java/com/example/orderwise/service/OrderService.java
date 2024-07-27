@@ -1,10 +1,7 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
-import com.example.orderwise.bean.ConfirmationDashboardStatsBean;
-import com.example.orderwise.bean.ConfirmedTreatedBean;
-import com.example.orderwise.bean.DashboardBean;
-import com.example.orderwise.bean.DeliveryBoyDashStatsBean;
+import com.example.orderwise.bean.*;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.common.dto.WalletDto;
@@ -12,11 +9,14 @@ import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.Status;
 import com.example.orderwise.entity.enums.UserType;
+import com.example.orderwise.exception.BusinessException;
 import com.example.orderwise.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -414,4 +414,32 @@ public class OrderService implements IBaseService<Order, OrderDto> {
                 })
                 .toList();
     }
+
+    public ResponseEntity<TruckingStepBean> getOrderTruckingStep(int trackingCode) {
+        Order order = orderRepository.findOrderByTrackingCode(trackingCode);
+        if (order == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        OrderDto orderDto = modelMapper.map(order, OrderDto.class);
+        TruckingStepBean truckingStepBean = new TruckingStepBean();
+        truckingStepBean.setStage(orderDto.getStage());
+        truckingStepBean.setStatus(orderDto.getStatus());
+        truckingStepBean.setDateStep(getDateStepByStage(orderDto));
+
+        return ResponseEntity.ok(truckingStepBean);
+    }
+
+    private Date getDateStepByStage(OrderDto orderDto) {
+        switch (orderDto.getStage()) {
+            case CONFIRMATION:
+                return orderDto.getConfirmationDate();
+            case SHIPPING:
+                return orderDto.getDeliveryDate();
+            case RETURN:
+                return orderDto.getReturnDate();
+            default:
+                return null;
+        }
+    }
+
 }
