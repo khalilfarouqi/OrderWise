@@ -26,6 +26,7 @@ public class User {
     private String cin;
     private String tel;
     private String image;
+    private String userId;
 
     private String confirmedBy;
 
