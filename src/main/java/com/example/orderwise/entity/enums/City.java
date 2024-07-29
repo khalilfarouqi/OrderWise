@@ -1,6 +1,7 @@
 package com.example.orderwise.entity.enums;
 
 public enum City {
+    NON_RESIDENT,
     AGOURI_MEKNES,
     AINBIDA_FES,
     AINCHKEF_FES,
