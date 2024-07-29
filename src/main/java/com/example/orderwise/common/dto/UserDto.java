@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
+import org.springframework.data.jpa.repository.Query;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -22,6 +24,7 @@ public class UserDto implements Serializable {
     private String firstname;
     private String lastname;
     private String username;
+    private String fullName;
     private String email;
     private String password;
     private String cin;
@@ -41,4 +44,7 @@ public class UserDto implements Serializable {
 
     @JsonIgnore
     private List<MyMoneyDto> myMoneyDtos;
+    public String getFullName() {
+        return (firstname != null ? firstname : "") + " " + (lastname != null ? lastname : "");
+    }
 }
