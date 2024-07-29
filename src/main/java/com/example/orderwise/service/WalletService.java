@@ -2,7 +2,6 @@ package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.common.dto.WalletDto;
-import com.example.orderwise.entity.User;
 import com.example.orderwise.entity.Wallet;
 import com.example.orderwise.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;

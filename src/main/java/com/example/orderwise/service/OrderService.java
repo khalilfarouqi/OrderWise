@@ -9,7 +9,6 @@ import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.Status;
 import com.example.orderwise.entity.enums.UserType;
-import com.example.orderwise.exception.BusinessException;
 import com.example.orderwise.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)

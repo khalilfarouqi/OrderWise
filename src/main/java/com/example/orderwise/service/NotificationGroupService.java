@@ -1,9 +1,7 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
-import com.example.orderwise.common.dto.NotificationDto;
 import com.example.orderwise.common.dto.NotificationGroupDto;
-import com.example.orderwise.entity.Notification;
 import com.example.orderwise.entity.NotificationGroup;
 import com.example.orderwise.repository.NotificationGroupRepository;
 import lombok.RequiredArgsConstructor;
