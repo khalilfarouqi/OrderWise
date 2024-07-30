@@ -8,5 +8,7 @@
   "notificationOfConfirmation":"Votre compte est activée !",
   "notificationOfReject":"Votre compte est refusée.",
   "bodyMailOfConfirmation":"",
-  "bodyMailOfReject":""
+  "bodyMailOfReject":"",
+  "smsDeleteAccount":"Your account with OrderWise has been successfully deleted. If you have any questions or need further assistance, please feel free to contact us.",
+  "emailSubjectDeleteAccount":"Account Deletion Confirmation"
 }
