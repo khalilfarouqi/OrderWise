@@ -1,7 +1,10 @@
 package com.example.orderwise.mail.services;
 
+import com.example.orderwise.common.dto.ConfigAppDto;
 import com.example.orderwise.common.dto.MyMoneyDto;
 import com.example.orderwise.common.dto.UserDto;
+import com.example.orderwise.entity.ConfigApp;
+import com.example.orderwise.service.ConfigAppService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +27,35 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final String fromEmail;
 
+    private final ConfigAppService configAppService;
+
     @Autowired
     private Configuration freemarkerConfig;
 
-    public MailService(JavaMailSender mailSender, @Value("${app.mail.from}") String fromEmail) {
+    public MailService(JavaMailSender mailSender, @Value("${app.mail.from}") String fromEmail, ConfigAppService configAppService) {
         this.mailSender = mailSender;
         this.fromEmail = fromEmail;
+        this.configAppService = configAppService;
+    }
+
+    public void sendDeleteEmail(String subject, UserDto userDto) throws Exception {
+        ConfigAppDto configAppDto = configAppService.getConfigOfApp();
+        Map<String, Object> model = new HashMap<>();
+        model.put("clientName", userDto.getFirstname() + " " + userDto.getLastname());
+        model.put("supportEmailAddress", configAppDto.getEmail());
+
+        String toAddress = userDto.getEmail();
+        String fromAddress = fromEmail;
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromAddress);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+        helper.setText(FreeMarkerTemplateUtils.processTemplateIntoString(freemarkerConfig.getTemplate("delete_account.ftlh"), model), true);
+
+        mailSender.send(message);
     }
 
     public void sendLoginPasswordMail(String subject, UserDto userDto) throws Exception {

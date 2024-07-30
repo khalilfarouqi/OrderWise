@@ -79,4 +79,9 @@ public class UserController implements UserApi {
         return userService.validee(user);
     }
 
+    @Override
+    public ResponseEntity<String> deleteAccount(String username, String password) {
+        return userService.deleteAccount(username, password);
+    }
+
 }

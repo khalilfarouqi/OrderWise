@@ -15,6 +15,7 @@ import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.UserRepository;
 import com.example.orderwise.exception.BusinessException;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -22,10 +23,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -348,5 +351,23 @@ public class UserService implements IBaseService<User, UserDto> {
                 .stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .toList();
+    }
+
+    @Transactional
+    public ResponseEntity<String> deleteAccount(String username, String password) {
+        UserDto userDto = findByUsername(username);
+        if (!encoder.matches(password, userDto.getPassword()))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password is incorrect");
+        userDto.setUserType(UserType.REFUSER);
+        userRepository.save(modelMapper.map(userDto, User.class));
+        try {
+            if (userDto.getEmail() != null)
+                mailService.sendDeleteEmail(jsonProperties.getEmailSubjectDeleteAccount().replaceAll("[\",]", ""), userDto);
+            if (userDto.getTel() != null)
+                smsService.sendSms(formatPhoneNumber(userDto.getTel()), jsonProperties.getSmsDeleteAccount().replaceAll("[\",]", ""));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send confirmation email.");
+        }
+        return ResponseEntity.ok("Your account has been deleted.");
     }
 }
