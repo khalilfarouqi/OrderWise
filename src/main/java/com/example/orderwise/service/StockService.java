@@ -1,6 +1,7 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.common.dto.ProductDto;
 import com.example.orderwise.common.dto.StockDto;
 import com.example.orderwise.entity.Stock;
 import com.example.orderwise.repository.StockRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -20,13 +22,19 @@ import java.util.List;
 public class StockService implements IBaseService<Stock, StockDto> {
     private final StockRepository stockRepository;
     private final ModelMapper modelMapper;
+
+    private final ProductService productService;
+
     @Override
     public StockDto save(StockDto dto) {
         return modelMapper.map(stockRepository.save(modelMapper.map(dto, Stock.class)), StockDto.class);
     }
 
     @Override
+    @Transactional
     public StockDto update(StockDto dto) {
+        dto.setLastModifiedDate(new Date());
+        dto.setProduct(productService.update(dto.getProduct()));
         return modelMapper.map(stockRepository.save(modelMapper.map(dto, Stock.class)), StockDto.class);
     }
 

@@ -27,6 +27,7 @@ public class ProductService implements IBaseService<Product, ProductDto> {
     }
 
     @Override
+    @Transactional
     public ProductDto update(ProductDto dto) {
         return modelMapper.map(productRepository.save(modelMapper.map(dto, Product.class)), ProductDto.class);
     }
