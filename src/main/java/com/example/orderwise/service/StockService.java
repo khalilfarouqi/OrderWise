@@ -50,7 +50,7 @@ public class StockService implements IBaseService<Stock, StockDto> {
 
     @Override
     public List<StockDto> findAll() {
-        return stockRepository.findAll()
+        return stockRepository.findAllOrderedByAdditionDate()
                 .stream()
                 .map(stock -> modelMapper.map(stock, StockDto.class))
                 .toList();
