@@ -42,7 +42,7 @@ upload:
   dir: '/Users/khalilfarouqi/Documents/Angular/OrderWise-Front/src/assets'
 
 infobip:
-  apiKey: 34a259bd15d4897a88cf5ffdd2da4be4-5564859a-b993-488f-944c-1ef5e314d9f4
+  apiKey: 
   apiUrl: https://api.infobip.com/sms/1/text/single
   senderId: 3CA99AB3B566AFEC74FB98187BDE0B8F
 
