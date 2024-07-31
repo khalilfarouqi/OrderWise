@@ -2,6 +2,7 @@ package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.*;
+import com.example.orderwise.common.config.JsonProperties;
 import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.common.dto.WalletDto;
@@ -9,6 +10,8 @@ import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.Status;
 import com.example.orderwise.entity.enums.UserType;
+import com.example.orderwise.mail.services.MailService;
+import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +31,20 @@ import java.util.*;
 @Service
 public class OrderService implements IBaseService<Order, OrderDto> {
     private final OrderRepository orderRepository;
-    private final ModelMapper modelMapper;
 
-    private final WalletService walletService;
+    private final ModelMapper modelMapper;
 
     private final DashboardBean dashboardBean = new DashboardBean();
     private final ConfirmationDashboardStatsBean confirmationDashboardStatsBean = new ConfirmationDashboardStatsBean();
     private final DeliveryBoyDashStatsBean deliveryBoyDashStatsBean = new DeliveryBoyDashStatsBean();
+
     private final UserService userService;
+    private final WalletService walletService;
+
+    private final MailService mailService;
+    private final SmsService smsService;
+
+    private final JsonProperties jsonProperties;
 
     @Override
     public OrderDto save(OrderDto dto) {
@@ -54,7 +63,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     @Override
     public OrderDto findById(Long id) {
-        return modelMapper.map(orderRepository.findById(id), OrderDto.class);
+        return modelMapper.map(orderRepository.findById(id).get(), OrderDto.class);
     }
 
     public List<OrderDto> findBySellerUsername(String username) {
@@ -438,6 +447,67 @@ public class OrderService implements IBaseService<Order, OrderDto> {
             default:
                 return null;
         }
+    }
+
+    @Transactional
+    public ResponseEntity<String> treatOrder(Long id, String status, String treatBy) {
+        OrderDto orderDto = findById(id);
+        Date currentDate = new Date();
+
+        try {
+            switch (status) {
+                case "CONFIRMED":
+                    updateOrderDetails(orderDto, currentDate, treatBy, Stage.SHIPPING, Status.PENDING);
+                    sendNotifications(orderDto, jsonProperties.getConfirmOrderEmailSubject(), jsonProperties.getConfirmOrderSms() + orderDto.getTrackingCode(), "confirmation");
+                    break;
+                case "REFUSE":
+                    updateOrderDetails(orderDto, currentDate, treatBy, Stage.FAIL, Status.REFUSE);
+                    sendNotifications(orderDto, jsonProperties.getCancelOrderEmailSubject(), jsonProperties.getCancelOrderSms(), "cancellation");
+                    break;
+                case "NO_ANSWER":
+                    orderDto.setNoAnswerDate(currentDate);
+                    orderDto.setNoAnswerBy(treatBy);
+                    orderDto.setStatus(Status.NO_ANSWER);
+                    update(orderDto);
+                    if (orderDto.getCustomer().getTel() != null) {
+                        smsService.sendSms(formatPhoneNumber(orderDto.getCustomer().getTel()), jsonProperties.getNotAnswerOrderSms().replaceAll("[\",]", ""));
+                    }
+                    break;
+                default:
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid status");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the order.");
+        }
+
+        return ResponseEntity.ok("Your order has been " + status + " successfully");
+    }
+
+    @Transactional
+    public void updateOrderDetails(OrderDto orderDto, Date date, String treatBy, Stage stage, Status status) {
+        orderDto.setConfirmationDate(date);
+        orderDto.setConfirmationBy(treatBy);
+        orderDto.setStage(stage);
+        orderDto.setStatus(status);
+        update(orderDto);
+    }
+
+    private void sendNotifications(OrderDto orderDto, String emailSubject, String smsMessage, String action) throws Exception {
+        if (orderDto.getCustomer().getEmail() != null) {
+            if (action.equals("confirmation"))
+                mailService.sendConfirmedOrderEmail(emailSubject.replaceAll("[\",]", ""), orderDto);
+            else if (action.equals("cancellation"))
+                mailService.sendCanceledOrderEmail(emailSubject.replaceAll("[\",]", ""), orderDto);
+        }
+        if (orderDto.getCustomer().getTel() != null)
+            smsService.sendSms(formatPhoneNumber(orderDto.getCustomer().getTel()), smsMessage.replaceAll("[\",]", ""));
+    }
+
+    private String formatPhoneNumber(String tel) {
+        if (tel.startsWith("0")) {
+            return tel.replaceFirst("0", "+212");
+        }
+        return tel;
     }
 
 }

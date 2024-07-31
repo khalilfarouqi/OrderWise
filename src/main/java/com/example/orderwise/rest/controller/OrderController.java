@@ -140,4 +140,9 @@ public class OrderController implements OrderApi {
     public ResponseEntity<TruckingStepBean> getOrderByTruckingCode(int trackingCode) {
         return orderService.getOrderTruckingStep(trackingCode);
     }
+
+    @Override
+    public ResponseEntity<String> treatOrder(Long id, String status, String treatBy) {
+        return orderService.treatOrder(id, status, treatBy);
+    }
 }

@@ -71,4 +71,6 @@ public interface OrderApi {
     List<ConfirmedTreatedBean> getDeliveryBoyTreated(@PathVariable("username") String username);
     @GetMapping(value = "/trucking-order/{trackingCode}")
     ResponseEntity<TruckingStepBean> getOrderByTruckingCode(@PathVariable("trackingCode") int trackingCode);
+    @PostMapping(value = "/treat-order/{id}/{status}/{treatBy}")
+    ResponseEntity<String> treatOrder(@PathVariable("id") Long id, @PathVariable("status") String status, @PathVariable("treatBy") String treatBy);
 }
