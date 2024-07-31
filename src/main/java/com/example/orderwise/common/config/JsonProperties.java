@@ -24,4 +24,9 @@ public class JsonProperties {
     private String bodyMailOfReject;
     private String smsDeleteAccount;
     private String emailSubjectDeleteAccount;
+    private String confirmOrderEmailSubject;
+    private String confirmOrderSms;
+    private String cancelOrderEmailSubject;
+    private String cancelOrderSms;
+    private String notAnswerOrderSms;
 }

@@ -10,5 +10,10 @@
   "bodyMailOfConfirmation":"",
   "bodyMailOfReject":"",
   "smsDeleteAccount":"Your account with OrderWise has been successfully deleted. If you have any questions or need further assistance, please feel free to contact us.",
-  "emailSubjectDeleteAccount":"Account Deletion Confirmation"
+  "emailSubjectDeleteAccount":"Account Deletion Confirmation",
+  "confirmOrderEmailSubject":"Your Order Has Been Confirmed!",
+  "confirmOrderSms":"Your order has been confirmed. Thank you for shopping with us! Tracking Code: ",
+  "cancelOrderEmailSubject":"Your Order Has Been Canceled",
+  "cancelOrderSms":"Your order has been canceled. For more details, please check your email.",
+  "notAnswerOrderSms":"We tried to reach you regarding your order. Please contact us for more information."
 }
