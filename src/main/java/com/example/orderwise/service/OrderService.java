@@ -10,6 +10,7 @@ import com.example.orderwise.entity.Order;
 import com.example.orderwise.entity.enums.Stage;
 import com.example.orderwise.entity.enums.Status;
 import com.example.orderwise.entity.enums.UserType;
+import com.example.orderwise.exception.*;
 import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.OrderRepository;
@@ -493,14 +494,25 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     }
 
     private void sendNotifications(OrderDto orderDto, String emailSubject, String smsMessage, String action) throws Exception {
-        if (orderDto.getCustomer().getEmail() != null) {
-            if (action.equals("confirmation"))
-                mailService.sendConfirmedOrderEmail(emailSubject.replaceAll("[\",]", ""), orderDto);
-            else if (action.equals("cancellation"))
-                mailService.sendCanceledOrderEmail(emailSubject.replaceAll("[\",]", ""), orderDto);
+        try {
+            if (orderDto.getCustomer().getEmail() != null) {
+                if (action.equals("confirmation")) {
+                    mailService.sendConfirmedOrderEmail(emailSubject.replaceAll("[\",]", ""), orderDto);
+                } else if (action.equals("cancellation")) {
+                    mailService.sendCanceledOrderEmail(emailSubject.replaceAll("[\",]", ""), orderDto);
+                }
+            }
+        } catch (Exception e) {
+            throw new EmailSendingException("Failed to send email notification.");
         }
-        if (orderDto.getCustomer().getTel() != null)
-            smsService.sendSms(formatPhoneNumber(orderDto.getCustomer().getTel()), smsMessage.replaceAll("[\",]", ""));
+
+        try {
+            if (orderDto.getCustomer().getTel() != null) {
+                smsService.sendSms(formatPhoneNumber(orderDto.getCustomer().getTel()), smsMessage.replaceAll("[\",]", ""));
+            }
+        } catch (Exception e) {
+            throw new SmsSendingException("Failed to send SMS notification.");
+        }
     }
 
     private String formatPhoneNumber(String tel) {
