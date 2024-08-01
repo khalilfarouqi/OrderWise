@@ -80,6 +80,11 @@ public class UserController implements UserApi {
     }
 
     @Override
+    public ResponseEntity<String> treatNewProfiles(UserDto user, String response) {
+        return userService.treatNewProfiles(user, response);
+    }
+
+    @Override
     public ResponseEntity<String> deleteAccount(String username, String password) {
         return userService.deleteAccount(username, password);
     }

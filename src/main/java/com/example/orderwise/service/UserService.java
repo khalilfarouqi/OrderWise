@@ -15,7 +15,6 @@ import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.UserRepository;
 import com.example.orderwise.exception.BusinessException;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,12 +22,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -43,6 +40,7 @@ public class UserService implements IBaseService<User, UserDto> {
     private final UserRepository userRepository;
 
     private final ModelMapper modelMapper;
+
     private final JsonProperties jsonProperties;
 
     private final MailService mailService;
@@ -99,7 +97,7 @@ public class UserService implements IBaseService<User, UserDto> {
             if (dto.getEmail() != null)
                 mailService.sendLoginPasswordMail(jsonProperties.getNewCustomerSubject().replaceAll("[\",]", ""), dto);
             if (dto.getTel() != null)
-            smsService.sendSms(formatPhoneNumber(dto.getTel()), jsonProperties.getSendPasswordSms().replaceAll("[\",]", ""));
+                smsService.sendSms(formatPhoneNumber(dto.getTel()), jsonProperties.getSendPasswordSms().replaceAll("[\",]", ""));
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
@@ -369,5 +367,43 @@ public class UserService implements IBaseService<User, UserDto> {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send confirmation email.");
         }
         return ResponseEntity.ok("Your account has been deleted.");
+    }
+
+    @Transactional
+    public ResponseEntity<String> treatNewProfiles(UserDto user, String response) {
+        try {
+            switch (response) {
+                case "save":
+                    userRepository.save(modelMapper.map(user, User.class));
+                    break;
+                case "validee":
+                    userRepository.save(modelMapper.map(user, User.class));
+                    sendNotificationsAfterTreat(user, jsonProperties.getEmailSubjectConfirmation(), jsonProperties.getSmsConfirmation(), "profileConfirmation.ftlh");
+                    break;
+                case "refusee":
+                    userRepository.save(modelMapper.map(user, User.class));
+                    sendNotificationsAfterTreat(user, jsonProperties.getEmailSubjectRefusal(), jsonProperties.getSmsRefusal(), "profileRefusal.ftlh");
+                    break;
+                default:
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid response");
+            }
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send confirmation email.");
+        }
+        return ResponseEntity.ok("Your account is " + response + " successfully");
+    }
+
+    private void sendNotificationsAfterTreat(UserDto userDto, String emailSubject, String smsMessage, String template) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("userName", userDto.getFullName());
+
+        try {
+            if (userDto.getEmail() != null)
+                mailService.sendEmail(userDto.getEmail(), emailSubject.replaceAll("[\",]", ""), model, template);
+            if (userDto.getTel() != null)
+                smsService.sendSms(formatPhoneNumber(userDto.getTel()), smsMessage.replaceAll("[\",]", ""));
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
     }
 }

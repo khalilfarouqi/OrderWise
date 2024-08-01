@@ -43,6 +43,8 @@ public interface UserApi {
     ResponseEntity<UserDto> refuse(@RequestBody UserDto user);
     @PutMapping("/valide")
     ResponseEntity<UserDto> valide(@RequestBody UserDto user);
+    @PostMapping("/treat-new-user/{response}")
+    ResponseEntity<String> treatNewProfiles(@RequestBody UserDto user, @PathVariable("response") String response);
     @PostMapping("/delete-account/{username}/{password}")
     ResponseEntity<String> deleteAccount(@PathVariable("username") String username, @PathVariable("password") String password);
 }
