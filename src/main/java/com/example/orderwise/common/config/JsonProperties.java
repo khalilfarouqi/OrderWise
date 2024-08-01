@@ -29,4 +29,8 @@ public class JsonProperties {
     private String cancelOrderEmailSubject;
     private String cancelOrderSms;
     private String notAnswerOrderSms;
+    private String emailSubjectConfirmation;
+    private String emailSubjectRefusal;
+    private String smsConfirmation;
+    private String smsRefusal;
 }

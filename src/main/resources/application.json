@@ -15,5 +15,9 @@
   "confirmOrderSms":"Your order has been confirmed. Thank you for shopping with us! Tracking Code: ",
   "cancelOrderEmailSubject":"Your Order Has Been Canceled",
   "cancelOrderSms":"Your order has been canceled. For more details, please check your email.",
-  "notAnswerOrderSms":"We tried to reach you regarding your order. Please contact us for more information."
+  "notAnswerOrderSms":"We tried to reach you regarding your order. Please contact us for more information.",
+  "emailSubjectConfirmation": "Your Profile Confirmation",
+  "emailSubjectRefusal": "Your Profile was not Confirme",
+  "smsConfirmation": "Your profile has been confirmed. Thank you for completing your profile.",
+  "smsRefusal": "Your profile is not valid. Please contact us for more information."
 }
