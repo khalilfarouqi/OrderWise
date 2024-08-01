@@ -51,9 +51,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     int countByNoAnswerByAndStageAndStatus(String confirmationName,Stage stage, Status status);
     int countByConfirmationByAndStageAndStatus(String confirmationName, Stage stage, Status status);
     int countByConfirmationByAndStageNotOrStageNot(String confirmationName, Stage stageP, Stage stageS);
-    @Query("select o.confirmationDate from Order o where o.confirmationBy = :confirmationBy order by o.confirmationDate desc")
+    @Query("select o.confirmationDate from Order o where o.confirmationBy = :confirmationBy order by o.confirmationDate desc limit 1")
     Date getLastDateOrdersToConfirm(@Param("confirmationBy") String confirmationBy);
-    @Query("select o.returnDate from Order o where o.confirmationBy = :confirmationBy order by o.returnDate desc")
+    @Query("select o.returnDate from Order o where o.confirmationBy = :confirmationBy order by o.returnDate desc limit 1")
     Date getLastDateOrdersToReturn(@Param("confirmationBy") String confirmationBy);
 
     List<Order> getAllByConfirmationByOrReturnedByOrNoAnswerBy(String confirmationBy, String deliveredBy, String returnedBy);
@@ -66,11 +66,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     int countByHoldToAndDeliveryDate(String holdTo, Date deliveryDate);
     int countByStageAndStatusOrStatus(Stage stage, Status status, Status status2);
 
-    @Query("select o.confirmationDate from Order o where o.confirmationBy = :deliverBy order by o.confirmationDate desc")
+    @Query("select o.confirmationDate from Order o where o.confirmationBy = :deliverBy order by o.confirmationDate desc limit 1")
     Date getLastDateOrderToTraite(@Param("deliverBy") String deliverBy);
-    @Query("select o.deliveredDate from Order o where o.deliveredBy = :deliverBy order by o.deliveredDate desc")
+    @Query("select o.deliveredDate from Order o where o.deliveredBy = :deliverBy order by o.deliveredDate desc limit 1")
     Date getLastDateOrderToDeliver(@Param("deliverBy") String deliverBy);
-    @Query("select o.returnDate from Order o where o.returnedBy = :deliverBy order by o.returnDate desc")
+    @Query("select o.returnDate from Order o where o.returnedBy = :deliverBy order by o.returnDate desc limit 1")
     Date getLastDateOrderToReturn(@Param("deliverBy") String deliverBy);
 
     List<Order> getAllByDeliveredByOrderByDeliveredDateDesc(String deliverBy);
