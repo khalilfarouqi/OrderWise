@@ -1,15 +1,13 @@
 package com.example.orderwise.mail.services;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 @Service
 public class SmsService {
@@ -45,5 +43,21 @@ public class SmsService {
         } catch (Exception e) {
             logger.error("Failed to send SMS: {}", e.getMessage());
         }
+    }
+
+    public ResponseEntity<String> sendSimpleSms(String to, String message) {
+        try {
+            sendSms(formatPhoneNumber(to), message);
+            return new ResponseEntity<>("SMS sent successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error sending SMS: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private String formatPhoneNumber(String tel) {
+        if (tel.startsWith("0")) {
+            return tel.replaceFirst("0", "+212");
+        }
+        return tel;
     }
 }
