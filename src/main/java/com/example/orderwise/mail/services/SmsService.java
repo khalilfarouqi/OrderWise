@@ -6,32 +6,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SmsService {
-    private static final Logger logger = LoggerFactory.getLogger(SmsService.class);
 
     @Value("${infobip.apiKey}")
     private String apiKey;
 
     @Value("${infobip.apiUrl}")
     private String apiUrl;
-
-    @Value("${infobip.baseUrl}")
-    private String baseUrl;
-
-    @Value("${infobip.baseApiUrl}")
-    private String baseApiUrl;
-
-    @Value("${infobip.senderId}")
-    private String senderId;
-
-    @Value("${twilio.phone.number}")
-    private String twilioPhoneNumber;
 
     @Value("${twilio.whatsapp.number}")
     private String twilioWhatsappNumber;
@@ -47,12 +33,15 @@ public class SmsService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "App " + apiKey);
 
-        String body = String.format("{\"from\":\"OrderWise\",\"to\":\"%s\",\"text\":\"%s\"}", formatPhoneNumber(to), message);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("from", "OrderWise");
+        payload.put("to", formatPhoneNumber(to));
+        payload.put("text", message);
 
-        HttpEntity<String> request = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
             return new ResponseEntity<>("SMS sent successfully: { " + response.getBody() + "}", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to send SMS: { " + e.getMessage() + "}", HttpStatus.INTERNAL_SERVER_ERROR);
