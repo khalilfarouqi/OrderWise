@@ -12,5 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/v1/sms")
 public interface SmsApi {
     @PostMapping("/send")
-    ResponseEntity<String> sendSimpleSms(@RequestParam String to, @RequestParam String text);
+    ResponseEntity<String> sendSms(@RequestParam String to, @RequestParam String text);
+    @PostMapping("/whatsapp")
+    ResponseEntity<String> sendWhatsAppMessage(@RequestParam String to, @RequestParam String message);
 }

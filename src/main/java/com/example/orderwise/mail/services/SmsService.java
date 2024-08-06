@@ -1,5 +1,7 @@
 package com.example.orderwise.mail.services;
 
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,8 +21,20 @@ public class SmsService {
     @Value("${infobip.apiUrl}")
     private String apiUrl;
 
+    @Value("${infobip.baseUrl}")
+    private String baseUrl;
+
+    @Value("${infobip.baseApiUrl}")
+    private String baseApiUrl;
+
     @Value("${infobip.senderId}")
     private String senderId;
+
+    @Value("${twilio.phone.number}")
+    private String twilioPhoneNumber;
+
+    @Value("${twilio.whatsapp.number}")
+    private String twilioWhatsappNumber;
 
     private final RestTemplate restTemplate;
 
@@ -28,29 +42,32 @@ public class SmsService {
         this.restTemplate = restTemplate;
     }
 
-    public void sendSms(String to, String message) {
+    public ResponseEntity<String> sendSms(String to, String message) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "App " + apiKey);
 
-        String body = String.format("{\"from\":\"%s\",\"to\":\"%s\",\"text\":\"%s\"}", senderId, to, message);
+        String body = String.format("{\"from\":\"OrderWise\",\"to\":\"%s\",\"text\":\"%s\"}", formatPhoneNumber(to), message);
 
         HttpEntity<String> request = new HttpEntity<>(body, headers);
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
-            logger.info("SMS sent successfully: {}", response.getBody());
+            return new ResponseEntity<>("SMS sent successfully: { " + response.getBody() + "}", HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Failed to send SMS: {}", e.getMessage());
+            return new ResponseEntity<>("Failed to send SMS: { " + e.getMessage() + "}", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<String> sendSimpleSms(String to, String message) {
+    public ResponseEntity<String> sendWhatsAppMessage(String to, String message) {
         try {
-            sendSms(formatPhoneNumber(to), message);
-            return new ResponseEntity<>("SMS sent successfully", HttpStatus.OK);
+            Message.creator(
+                    new PhoneNumber("whatsapp:" + formatPhoneNumber(to)),
+                    new PhoneNumber("whatsapp:" + twilioWhatsappNumber),
+                    message).create();
+            return new ResponseEntity<>("WhatsApp message sent successfully", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error sending SMS: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to send WhatsApp message : { " + e.getMessage() + "}", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
