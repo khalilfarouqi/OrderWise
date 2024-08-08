@@ -15,6 +15,7 @@ The Order Management System is a backend web application designed to streamline 
 - **RESTful API:** Building RESTful APIs to facilitate communication between frontend and backend components.
 - **Spring Boot Starter Mail:** Enabling email notifications for user-related actions such as order confirmations.
 - **Infobip:** Integrating Infobip API for sending SMS notifications.
+- **Keycloak:** Implementing security and authentication using Keycloak for secure user management and access control.
 
 ## Getting Started
 
@@ -24,6 +25,7 @@ The Order Management System is a backend web application designed to streamline 
 - Apache Maven (if using for build management)
 - PostgreSQL Server
 - Infobip Account and API Key
+- Keycloak Server
 
 ### Installation
 
@@ -32,13 +34,18 @@ The Order Management System is a backend web application designed to streamline 
 3. Configure PostgreSQL database settings in `application.properties`
 4. Configure email settings in `application.properties`
 5. Configure Infobip settings in `application.properties`
-6. Build and run the application
+6. Configure Keycloak settings in `application.properties`
+7. Build and run the application
 
 ### Usage
 
 1. Ensure the backend server is up and running.
 2. Integrate the backend with your frontend or API client.
 3. Start managing orders, tracking deliveries, and analyzing performance through API calls.
+
+### Security and Authentication
+
+The system uses Keycloak for managing security and authentication. Users can sign up, log in, and access various features based on their roles and permissions defined in Keycloak. Ensure you have set up Keycloak correctly and configured it in the `application.properties` file.
 
 ### Email and SMS Notifications
 
@@ -50,4 +57,4 @@ This project is licensed under the [MIT License](link-to-license).
 
 ## Acknowledgements
 
-Special thanks to the Spring Framework community for providing excellent documentation and resources for building enterprise-grade applications.
+Special thanks to the Spring Framework community for providing excellent documentation and resources for building enterprise-grade applications. Also, thanks to the Keycloak community for their support and resources in implementing secure authentication and authorization.
