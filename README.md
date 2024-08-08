@@ -13,6 +13,9 @@ The Order Management System is a backend web application designed to streamline 
 - **Lombok:** Enhancing productivity by reducing boilerplate code in Java classes.
 - **Swagger:** Automatically generating interactive API documentation for better API understanding and testing.
 - **RESTful API:** Building RESTful APIs to facilitate communication between frontend and backend components.
+- **Spring Boot Starter Mail:** Enabling email notifications for user-related actions such as order confirmations.
+- **Infobip:** Integrating Infobip API for sending SMS notifications.
+- **Keycloak:** Implementing security and authentication using Keycloak for secure user management and access control.
 
 ## Getting Started
 
@@ -21,13 +24,18 @@ The Order Management System is a backend web application designed to streamline 
 - Java Development Kit (JDK) 17
 - Apache Maven (if using for build management)
 - PostgreSQL Server
+- Infobip Account and API Key
+- Keycloak Server
 
 ### Installation
 
 1. Clone the repository: `git clone https://github.com/khalilfarouqi/OrderWise.git`
 2. Navigate to the project directory
 3. Configure PostgreSQL database settings in `application.properties`
-4. Build and run the application
+4. Configure email settings in `application.properties`
+5. Configure Infobip settings in `application.properties`
+6. Configure Keycloak settings in `application.properties`
+7. Build and run the application
 
 ### Usage
 
@@ -35,10 +43,18 @@ The Order Management System is a backend web application designed to streamline 
 2. Integrate the backend with your frontend or API client.
 3. Start managing orders, tracking deliveries, and analyzing performance through API calls.
 
+### Security and Authentication
+
+The system uses Keycloak for managing security and authentication. Users can sign up, log in, and access various features based on their roles and permissions defined in Keycloak. Ensure you have set up Keycloak correctly and configured it in the `application.properties` file.
+
+### Email and SMS Notifications
+
+The system can send email notifications for various user-related actions such as order confirmations. Ensure you have configured the email settings in the `application.properties` file. Additionally, the system can send SMS notifications using the Infobip API. Ensure you have configured the Infobip settings in the `application.properties` file.
+
 ## License
 
 This project is licensed under the [MIT License](link-to-license).
 
 ## Acknowledgements
 
-Special thanks to the Spring Framework community for providing excellent documentation and resources for building enterprise-grade applications.
+Special thanks to the Spring Framework community for providing excellent documentation and resources for building enterprise-grade applications. Also, thanks to the Keycloak community for their support and resources in implementing secure authentication and authorization.
