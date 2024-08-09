@@ -37,7 +37,13 @@ server:
 app:
   mail:
     from: bio.khalil.f@gmail.com
-
+  public-client: true
+  realm: OrderWise
+  resource: OrderWise-BackEnd
+  auth-server-url: http://localhost:8080/auth
+  secret: 22QEUyzK60a2iGRnPBgyIArzKBIjScuf
+  username: admin
+  password: admin
 upload:
   dir: '/Users/khalilfarouqi/Documents/Angular/OrderWise-Front/src/assets'
 
