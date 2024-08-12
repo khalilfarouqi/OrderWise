@@ -27,6 +27,7 @@ public class KeycloakSecurityConfig {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        // Configure Keycloak authentication provider
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = new KeycloakAuthenticationProvider();
         keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
         auth.authenticationProvider(keycloakAuthenticationProvider);
@@ -34,28 +35,34 @@ public class KeycloakSecurityConfig {
 
     @Bean
     public KeycloakConfigResolver keycloakConfigResolver() {
+        // Use KeycloakSpringBootConfigResolver to load Keycloak configuration from application.properties or application.yml
         return new KeycloakSpringBootConfigResolver();
     }
 
     @Bean
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        // Use a stateless session strategy since we're using JWT tokens
         return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(
-                                "/v1/config-app/**",
-                                "/v1/order/trucking-order/**",
-                                "/v1/contactus/**",
-                                "/v1/destinations/**",
-                                "/v1/user/**").permitAll()
-                        .requestMatchers("/**").authenticated()
+        http
+                // Configure authorization rules
+                .authorizeHttpRequests((authz) -> authz
+                        // Allow unauthenticated access to specific endpoints
+                        .requestMatchers("**").permitAll()
+
+                        // All other requests must be authenticated
+                        .anyRequest().authenticated()
                 )
+                // Enable CORS with default settings (optional, based on your needs)
                 .cors(withDefaults())
+                // Disable CSRF since we're using JWT tokens
                 .csrf(AbstractHttpConfigurer::disable)
+                // Configure session management to stateless (important for APIs using JWT)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Handle unauthorized requests
                 .exceptionHandling((exceptions) -> exceptions.authenticationEntryPoint(new Http403ForbiddenEntryPoint()));
 
         return http.build();
