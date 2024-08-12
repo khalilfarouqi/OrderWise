@@ -16,22 +16,12 @@ import jakarta.ws.rs.client.Client;
 
 @Configuration
 public class KeycloakClientConfig {
-    @Value("${app.public-client}")
-    private Boolean publicClient;
-    @Value("${app.realm}")
-    private String realm;
-    @Value("${app.resource}")
-    private String resource;
-    @Value("${app.auth-server-url}")
-    private String authServerUrl;
-    @Value("${app.secret}")
-    private String secret;
-    @Value("${app.username}")
-    private String username;
-    @Value("${app.password}")
-    private String password;
-
+    private final AppProperties appProperties;
     static Keycloak keycloak = null;
+
+    public KeycloakClientConfig(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
 
     public static String getCurrentUserToken() {
         KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -58,12 +48,12 @@ public class KeycloakClientConfig {
 
     public Keycloak getInstance() {
         keycloak = KeycloakBuilder.builder()
-                .serverUrl(authServerUrl)
+                .serverUrl(appProperties.getAuthServerUrl())
                 .grantType(OAuth2Constants.PASSWORD)
-                .realm(realm)
-                .clientId(resource)
-                .username(username)
-                .password(password)
+                .realm(appProperties.getRealm())
+                .clientId(appProperties.getResource())
+                .username(appProperties.getUsername())
+                .password(appProperties.getPassword())
                 .resteasyClient((Client) new ResteasyClientBuilderImpl().connectionPoolSize(10).build())
                 .build();
         keycloak.tokenManager().getAccessToken();
