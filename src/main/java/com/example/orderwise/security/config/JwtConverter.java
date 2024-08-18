@@ -31,7 +31,6 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
         this.appProperties = appProperties;
     }
 
-
     public static Keycloak getInstance() {
         Client resteasyClient = ClientBuilder.newBuilder().build();
         keycloak = KeycloakBuilder.builder()
@@ -41,6 +40,21 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
                 .clientId(appProperties.getResource())
                 .username(appProperties.getUsername())
                 .password(appProperties.getPassword())
+                .resteasyClient(resteasyClient)
+                .build();
+        keycloak.tokenManager().getAccessToken();
+        return keycloak;
+    }
+
+    public static Keycloak getUserInstance(String username, String password) {
+        Client resteasyClient = ClientBuilder.newBuilder().build();
+        keycloak = KeycloakBuilder.builder()
+                .serverUrl(appProperties.getAuthServerUrl())
+                .grantType(OAuth2Constants.PASSWORD)
+                .realm(appProperties.getRealm())
+                .clientId(appProperties.getResource())
+                .username(username)
+                .password(password)
                 .resteasyClient(resteasyClient)
                 .build();
         keycloak.tokenManager().getAccessToken();
