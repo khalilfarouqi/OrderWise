@@ -32,12 +32,18 @@ spring:
       enabled: true
       max-file-size: 2MB
       max-request-size: 2MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/OrderWise
+          jwk-set-uri: "${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs"
+
 server:
   port: 8081
 app:
   mail:
     from: bio.khalil.f@gmail.com
-
 upload:
   dir: '/Users/khalilfarouqi/Documents/Angular/OrderWise-Front/src/assets'
 
@@ -47,3 +53,18 @@ infobip:
   senderId: 3CA99AB3B566AFEC74FB98187BDE0B8F
 
 
+keycloak:
+  realm: OrderWise
+  auth-server-url: http://localhost:8080
+  resource: OrderWise-BackEnd
+  public-client: true
+  bearer-only: true
+  secret: WViiJleyKaxcFlD9fru4SurIJUk0jT7I
+  username: admin
+  password: admin
+
+jwt:
+  auth:
+    converter:
+      resource-id: OrderWise
+      principal-attribute: admin
