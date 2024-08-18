@@ -14,6 +14,7 @@ import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.UserRepository;
 import com.example.orderwise.exception.BusinessException;
+import com.example.orderwise.security.service.KeycloakAdminService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,7 @@ public class UserService implements IBaseService<User, UserDto> {
     private final SmsService smsService;
     private final NotificationService notificationService;
     private final NotificationGroupService notificationGroupService;
+    private final KeycloakAdminService keycloakAdminService;
 
     public static int counter = 1;
 
@@ -60,7 +62,8 @@ public class UserService implements IBaseService<User, UserDto> {
     public UserDto save(UserDto dto) {
         validateUser(dto);
         sendNotifications(dto);
-        encodePassword(dto);
+
+        dto.setUserId(keycloakAdminService.createUser(dto));
 
         User savedUser = userRepository.save(modelMapper.map(dto, User.class));
         NotificationGroupDto notificationGroupDto = createNotificationGroup();
@@ -146,6 +149,7 @@ public class UserService implements IBaseService<User, UserDto> {
                 user.get().setEmail(dto.getEmail());
                 user.get().setTel(dto.getTel());
             }
+            keycloakAdminService.updateUser(user.get().getUserId(), modelMapper.map(user.get(), UserDto.class));
             return modelMapper.map(userRepository.save(modelMapper.map(user.get(), User.class)), UserDto.class);
         } else {
             throw new BusinessException(String.format("User not found [%s]", dto.getUsername()));
@@ -164,7 +168,11 @@ public class UserService implements IBaseService<User, UserDto> {
         user.setTel(dto.getTel());
         user.setCity(dto.getCity());
         user.setGender(dto.getGender());
+
+        keycloakAdminService.removeUserRole(user.getUserId(), user.getRole().name());
         user.setUserType(dto.getUserType());
+        keycloakAdminService.assignUserRole(user.getUserId(), user.getRole().name());
+        keycloakAdminService.updateUser(user.getUserId(), modelMapper.map(user, UserDto.class));
 
         User updatedUser = userRepository.save(user);
         return modelMapper.map(updatedUser, UserDto.class);
@@ -323,14 +331,9 @@ public class UserService implements IBaseService<User, UserDto> {
     @Transactional
     public void changePassword(String username, ChangePasswordRequest request) {
         try {
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new Exception("User not found"));
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new Exception("User not found"));
 
-            if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
-                throw new Exception("Old password is incorrect");
-            }
-            user.setPassword(encoder.encode(request.getNewPassword()));
-            userRepository.save(user);
+            keycloakAdminService.changeUserPassword(user.getUserId(), request.getNewPassword());
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
@@ -354,10 +357,15 @@ public class UserService implements IBaseService<User, UserDto> {
     @Transactional
     public ResponseEntity<String> deleteAccount(String username, String password) {
         UserDto userDto = findByUsername(username);
-        if (!encoder.matches(password, userDto.getPassword()))
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password is incorrect");
+        if (!keycloakAdminService.checkPassword(username, password))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+
+        keycloakAdminService.removeUserRole(userDto.getUserId(), userDto.getUserType().name());
         userDto.setUserType(UserType.REFUSER);
+        keycloakAdminService.assignUserRole(userDto.getUserId(), userDto.getUserType().name());
+
         userRepository.save(modelMapper.map(userDto, User.class));
+
         try {
             if (userDto.getEmail() != null)
                 mailService.sendDeleteEmail(jsonProperties.getEmailSubjectDeleteAccount().replaceAll("[\",]", ""), userDto);
