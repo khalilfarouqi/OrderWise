@@ -14,11 +14,4 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/keycloak")
 public class KeycloakController {
 
-    @Autowired
-    private final KeycloakAdminService keycloakAdminService;
-
-    @PostMapping
-    ResponseEntity<String> save(@RequestBody UserDto userDto){
-        return keycloakAdminService.createUser(userDto);
-    }
 }
