@@ -47,11 +47,11 @@ public class KeycloakAdminService {
             RoleRepresentation roleRepresentation = getInstance()
                     .realm(appProperties.getRealm())
                     .roles()
-                    .get(UserType.ADMIN.name())
+                    .get(userDto.getUserType().name())
                     .toRepresentation();
             userResource.roles().realmLevel().add(Collections.singletonList(roleRepresentation));
 
-            return ResponseEntity.ok().body("User created successfully with role " + UserType.ADMIN.name());
+            return ResponseEntity.ok().body("User created successfully with role " + userDto.getUserType().name());
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("this user Name or mail ready exist");
         }
