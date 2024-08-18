@@ -1,5 +1,10 @@
 package com.example.orderwise.security.config;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import org.keycloak.OAuth2Constants;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.core.convert.converter.Converter;
@@ -17,8 +22,29 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
 
     private final JwtConverterProperties properties;
 
-    public JwtConverter(JwtConverterProperties properties) {
+    public static AppProperties appProperties;
+
+    static Keycloak keycloak = null;
+
+    public JwtConverter(JwtConverterProperties properties, AppProperties appProperties) {
         this.properties = properties;
+        this.appProperties = appProperties;
+    }
+
+
+    public static Keycloak getInstance() {
+        Client resteasyClient = ClientBuilder.newBuilder().build();
+        keycloak = KeycloakBuilder.builder()
+                .serverUrl(appProperties.getAuthServerUrl())
+                .grantType(OAuth2Constants.PASSWORD)
+                .realm(appProperties.getRealm())
+                .clientId(appProperties.getResource())
+                .username(appProperties.getUsername())
+                .password(appProperties.getPassword())
+                .resteasyClient(resteasyClient)
+                .build();
+        keycloak.tokenManager().getAccessToken();
+        return keycloak;
     }
 
     @Override
