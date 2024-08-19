@@ -26,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -63,7 +62,6 @@ public class UserService implements IBaseService<User, UserDto> {
 
         dto.setUserId(keycloakAdminService.createUser(dto));
 
-        User savedUser = userRepository.save(modelMapper.map(dto, User.class));
         NotificationGroupDto notificationGroupDto = createNotificationGroup();
 
         notificationGroupDto = notificationGroupService.save(notificationGroupDto);
@@ -101,10 +99,6 @@ public class UserService implements IBaseService<User, UserDto> {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
-    }
-
-    private void encodePassword(UserDto dto) {
-        dto.setPassword(encoder.encode(dto.getPassword()));
     }
 
     private NotificationGroupDto createNotificationGroup() {
