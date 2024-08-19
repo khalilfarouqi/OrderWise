@@ -55,8 +55,6 @@ public class UserService implements IBaseService<User, UserDto> {
     @Value("${upload.dir}")
     private String uploadDir;
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
     @Override
     @Transactional
     public UserDto save(UserDto dto) {
@@ -72,8 +70,7 @@ public class UserService implements IBaseService<User, UserDto> {
 
         NotificationDto notificationDto = createNotification(notificationGroupDto, dto);
         notificationService.save(notificationDto);
-
-        return modelMapper.map(savedUser, UserDto.class);
+        return notificationDto.getUser();
     }
 
     private void validateUser(UserDto dto) {
