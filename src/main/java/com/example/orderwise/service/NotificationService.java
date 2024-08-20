@@ -1,8 +1,15 @@
 package com.example.orderwise.service;
 
 import com.example.orderwise.base.IBaseService;
+import com.example.orderwise.bean.NotificationRequestBean;
+import com.example.orderwise.common.config.JsonProperties;
+import com.example.orderwise.common.dto.MyMoneyDto;
 import com.example.orderwise.common.dto.NotificationDto;
+import com.example.orderwise.entity.MyMoney;
 import com.example.orderwise.entity.Notification;
+import com.example.orderwise.exception.BusinessException;
+import com.example.orderwise.mail.services.MailService;
+import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +31,12 @@ public class NotificationService implements IBaseService<Notification, Notificat
 
     private final NotificationRepository notificationRepository;
 
+    private final SmsService smsService;
+    private final MailService mailService;
+
     private final ModelMapper modelMapper;
+
+    private final JsonProperties jsonProperties;
 
     @Override
     public NotificationDto save(NotificationDto dto) {
@@ -74,5 +86,14 @@ public class NotificationService implements IBaseService<Notification, Notificat
         return notificationRepository.getNotificationNotReadByUsername(username).stream()
                 .map(notification -> modelMapper.map(notification, NotificationDto.class))
                 .toList();
+    }
+
+    public void sendNotifications(NotificationRequestBean notificationRequestBean) {
+        try {
+            mailService.sendEmail(notificationRequestBean.getToEmail(), notificationRequestBean.getSubject(), notificationRequestBean.getModel(), notificationRequestBean.getTemplate());
+            smsService.sendSms(notificationRequestBean.getTel(), notificationRequestBean.getMessage());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
     }
 }
