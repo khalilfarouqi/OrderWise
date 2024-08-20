@@ -84,6 +84,7 @@ public class ContactUsService implements IBaseService<ContactUs, ContactUsDto> {
             String slackMessage = "New contact message received:\n" +
                     "Name: " + message.getFullName() + "\n" +
                     "Email: " + message.getEmail() + "\n" +
+                    "Tel: " + message.getPhoneNumber() + "\n" +
                     "Message: " + message.getMessage();
             slackMessageService.sendSlackMessage(slackMessage);
         } catch (Exception e) {
