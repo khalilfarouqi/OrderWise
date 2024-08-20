@@ -134,6 +134,11 @@ public class KeycloakAdminService {
         return ResponseEntity.ok().body("Role " + roleName + " assigned successfully");
     }
 
+    public void changeRole(String userId, String oldRoleName, String newRoleName) {
+        removeUserRole(userId, oldRoleName);
+        assignUserRole(userId, newRoleName);
+    }
+
     public ResponseEntity<String> resetUserPassword(String userId, String newPassword) {
         UsersResource usersResource = getInstance().realm(appProperties.getRealm()).users();
         UserResource userResource = usersResource.get(userId);
