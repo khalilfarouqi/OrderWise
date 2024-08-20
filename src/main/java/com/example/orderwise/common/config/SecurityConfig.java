@@ -29,6 +29,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/v1/destinations/getAll").permitAll()
+                        .requestMatchers("/v1/config-app/**").permitAll()
                         .requestMatchers("/v1/order/trucking-order/**").permitAll()
                         .requestMatchers("/v1/keycloak/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/contactus").permitAll()
