@@ -14,9 +14,9 @@ import com.example.orderwise.exception.*;
 import com.example.orderwise.mail.services.MailService;
 import com.example.orderwise.mail.services.SmsService;
 import com.example.orderwise.repository.OrderRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,6 @@ import java.util.*;
 
 @Slf4j
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Service
 public class OrderService implements IBaseService<Order, OrderDto> {
     private final OrderRepository orderRepository;
@@ -41,11 +40,23 @@ public class OrderService implements IBaseService<Order, OrderDto> {
 
     private final UserService userService;
     private final WalletService walletService;
+    private final TeamMembersService teamMembersService;
 
     private final MailService mailService;
     private final SmsService smsService;
 
     private final JsonProperties jsonProperties;
+
+    public OrderService(OrderRepository orderRepository, ModelMapper modelMapper, UserService userService, WalletService walletService, @Lazy TeamMembersService teamMembersService, MailService mailService, SmsService smsService, JsonProperties jsonProperties) {
+        this.orderRepository = orderRepository;
+        this.modelMapper = modelMapper;
+        this.userService = userService;
+        this.walletService = walletService;
+        this.teamMembersService = teamMembersService;
+        this.mailService = mailService;
+        this.smsService = smsService;
+        this.jsonProperties = jsonProperties;
+    }
 
     @Override
     public OrderDto save(OrderDto dto) {
@@ -459,6 +470,7 @@ public class OrderService implements IBaseService<Order, OrderDto> {
             switch (status) {
                 case "CONFIRMED":
                     updateOrderDetails(orderDto, currentDate, treatBy, Stage.SHIPPING, Status.PENDING);
+                    teamMembersService.assignOrderToTeamMember(orderDto.getId(), UserType.DELIVERY_BOY);
                     sendNotifications(orderDto, jsonProperties.getConfirmOrderEmailSubject(), jsonProperties.getConfirmOrderSms() + orderDto.getTrackingCode(), "confirmation");
                     break;
                 case "REFUSE":
