@@ -71,6 +71,29 @@ public class UserService implements IBaseService<User, UserDto> {
         return notificationDto.getUser();
     }
 
+    @Transactional
+    public void saveNotifications(UserDto dto, String object, String body, NotificationType notificationType, Boolean notificationWeb) {
+
+        NotificationGroupDto notificationGroupDto = new NotificationGroupDto();
+        notificationGroupDto.setObject(object);
+        notificationGroupDto.setBody(body);
+        notificationGroupDto.setNotificationType(notificationType);
+        notificationGroupDto.setNotificationWeb(notificationWeb);
+        notificationGroupDto.setDateEnvoy(new Date());
+
+        notificationGroupDto = notificationGroupService.save(notificationGroupDto);
+
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setObject(notificationGroupDto.getObject());
+        notificationDto.setBody(notificationGroupDto.getBody());
+        notificationDto.setIsRead(false);
+        notificationDto.setNotificationWeb(notificationWeb);
+        //notificationDto.setUser(dto);
+        notificationDto.setNotificationGroup(notificationGroupDto);
+
+        notificationService.save(notificationDto);
+    }
+
     private void validateUser(UserDto dto) {
         userRepository.findByUsername(dto.getUsername())
                 .ifPresent(a -> {
@@ -212,6 +235,7 @@ public class UserService implements IBaseService<User, UserDto> {
             } else {
                 throw new IllegalArgumentException("Unsupported motif: " + motif);
             }
+            saveNotifications(dto, subjectByMotif, motif.name(), NotificationType.NOTIFICATION_SMS_MAIL, true);
             if (emailResponse.getStatusCode() != HttpStatus.OK) {
                 return emailResponse;
             }
@@ -377,10 +401,14 @@ public class UserService implements IBaseService<User, UserDto> {
                     break;
                 case "validee":
                     userRepository.save(modelMapper.map(user, User.class));
+                    keycloakAdminService.changeRole(user.getUserId(), UserType.NEW_USER.name(), user.getUserType().name());
+                    saveNotifications(user, "Your Profile is valide", "Your Profile is valide", NotificationType.NOTIFICATION_SMS_MAIL, true);
                     sendNotificationsAfterTreat(user, jsonProperties.getEmailSubjectConfirmation(), jsonProperties.getSmsConfirmation(), "profileConfirmation.ftlh");
                     break;
                 case "refusee":
                     userRepository.save(modelMapper.map(user, User.class));
+                    keycloakAdminService.changeRole(user.getUserId(), UserType.NEW_USER.name(), user.getUserType().name());
+                    saveNotifications(user, "Your Profile is refuse", "Your Profile is refuse", NotificationType.NOTIFICATION_SMS_MAIL, true);
                     sendNotificationsAfterTreat(user, jsonProperties.getEmailSubjectRefusal(), jsonProperties.getSmsRefusal(), "profileRefusal.ftlh");
                     break;
                 default:
