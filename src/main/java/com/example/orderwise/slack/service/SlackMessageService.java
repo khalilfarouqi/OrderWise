@@ -7,7 +7,7 @@ import java.io.IOException;
 
 @Service
 public class SlackMessageService {
-    private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
+    private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
 
     public void sendSlackMessage(String message) throws IOException {
         OkHttpClient client = new OkHttpClient();
