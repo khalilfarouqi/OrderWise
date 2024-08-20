@@ -5,7 +5,6 @@ import com.example.orderwise.rest.api.ContactUsApi;
 import com.example.orderwise.service.ContactUsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;

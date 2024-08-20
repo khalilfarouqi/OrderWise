@@ -1,7 +1,6 @@
 package com.example.orderwise.rest.api;
 
 import com.example.orderwise.common.dto.ContactUsDto;
-import com.example.orderwise.common.dto.UserDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
