@@ -41,6 +41,7 @@ public class KeycloakAdminService {
         user.setFirstName(userDto.getFirstname());
         user.setLastName(userDto.getLastname());
         user.setEmail(userDto.getEmail());
+        user.setEmailVerified(true);
         //set user role
         user.setRealmRoles(Collections.singletonList(UserType.ADMIN.name()));
         user.setCredentials(Collections.singletonList(credential));
