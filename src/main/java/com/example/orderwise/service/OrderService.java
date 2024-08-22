@@ -322,8 +322,8 @@ public class OrderService implements IBaseService<Order, OrderDto> {
     }
 
     public List<OrderDto> findOrderToDeliver(String username) {
-        UserDto userDto = userService.findByUsername(username);
-        return orderRepository.findOrderToDeliver(userDto.getCity())
+        //UserDto userDto = userService.findByUsername(username);
+        return orderRepository.findAllByHoldToAndStageAndStatus(username, Stage.SHIPPING, Status.PENDING)
                 .stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .toList();

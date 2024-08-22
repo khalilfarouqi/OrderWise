@@ -41,6 +41,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o JOIN o.cart c JOIN c.customer cu JOIN c.items i JOIN i.product p JOIN p.seller u WHERE o.status = 'WAITING' AND u.userType = 'DELIVERY_BOY' AND cu.city = :deliverCity")
     List<Order> findOrderToDeliver(@Param("deliverCity") City deliverCity);
 
+    List<Order> findAllByHoldToAndStageAndStatus(String holdTo, Stage stage, Status status);
+
     int countByStageAndStatus(Stage stage, Status status);
     int countByConfirmationBy(String confirmedName);
     @Query("select count(o) FROM Order o WHERE o.confirmationBy = :confirmationName AND year(o.confirmationDate) = :year AND month(o.confirmationDate) = :month AND day(o.confirmationDate) = :day")
