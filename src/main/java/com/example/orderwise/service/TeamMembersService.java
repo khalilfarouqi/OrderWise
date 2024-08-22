@@ -7,7 +7,6 @@ import com.example.orderwise.common.dto.TeamMembersDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.TeamMembers;
 import com.example.orderwise.entity.enums.UserType;
-import com.example.orderwise.exception.BusinessException;
 import com.example.orderwise.repository.TeamMembersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -63,7 +59,7 @@ public class TeamMembersService implements IBaseService<TeamMembers, TeamMembers
 
     @Override
     public TeamMembersDto findById(Long id) {
-        return modelMapper.map(teamMembersRepository.findById(id), TeamMembersDto.class);
+        return modelMapper.map(teamMembersRepository.findById(id).get(), TeamMembersDto.class);
     }
 
     @Override
@@ -83,10 +79,19 @@ public class TeamMembersService implements IBaseService<TeamMembers, TeamMembers
     public void assignOrderToTeamMember(Long orderId, UserType userType) {
         OrderDto orderDto = orderService.findById(orderId);
 
-        List<TeamMembersDto> prioritizedMembers = teamMembersRepository.findAllByUserTypeAndAvailabilityIsTrue(userType)
-                .stream()
-                .map(teamMembers -> modelMapper.map(teamMembers, TeamMembersDto.class))
-                .toList();
+        List<TeamMembersDto> prioritizedMembers;
+
+        if (userType == UserType.DELIVERY_BOY) {
+            prioritizedMembers = teamMembersRepository.findAllByUserTypeAndAvailabilityIsTrueAndUserCity(userType, orderDto.getCart().getCustomer().getCity())
+                    .stream()
+                    .map(teamMembers -> modelMapper.map(teamMembers, TeamMembersDto.class))
+                    .toList();
+        } else {
+            prioritizedMembers = teamMembersRepository.findAllByUserTypeAndAvailabilityIsTrue(userType)
+                    .stream()
+                    .map(teamMembers -> modelMapper.map(teamMembers, TeamMembersDto.class))
+                    .toList();
+        }
 
         try {
             TeamMembersDto chosenMember = prioritizedMembers
