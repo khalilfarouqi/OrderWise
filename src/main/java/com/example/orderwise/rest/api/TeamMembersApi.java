@@ -1,8 +1,10 @@
 package com.example.orderwise.rest.api;
 
 import com.example.orderwise.common.dto.TeamMembersDto;
+import com.example.orderwise.common.dto.UserDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,4 +29,6 @@ public interface TeamMembersApi {
                            @RequestParam(defaultValue = "10") Integer size,
                            @RequestParam(defaultValue = "asc") String order,
                            @RequestParam(defaultValue = "id") String sort);
+    @PostMapping("/add-member")
+    ResponseEntity<String> addMember(@RequestBody UserDto userDto);
 }

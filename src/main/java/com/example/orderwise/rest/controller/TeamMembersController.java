@@ -1,11 +1,13 @@
 package com.example.orderwise.rest.controller;
 
 import com.example.orderwise.common.dto.TeamMembersDto;
+import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.rest.api.TeamMembersApi;
 import com.example.orderwise.service.TeamMembersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -44,5 +46,10 @@ public class TeamMembersController implements TeamMembersApi {
     @Override
     public Page<TeamMembersDto> search(String query, Integer page, Integer size, String order, String sort) {
         return teamMembersService.rsqlQuery(query, page, size, order, sort);
+    }
+
+    @Override
+    public ResponseEntity<String> addMember(UserDto userDto) {
+        return teamMembersService.saveTeamMembers(userDto);
     }
 }

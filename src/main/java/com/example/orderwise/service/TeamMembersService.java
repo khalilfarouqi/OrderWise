@@ -6,6 +6,7 @@ import com.example.orderwise.common.dto.OrderDto;
 import com.example.orderwise.common.dto.TeamMembersDto;
 import com.example.orderwise.common.dto.UserDto;
 import com.example.orderwise.entity.TeamMembers;
+import com.example.orderwise.entity.enums.Role;
 import com.example.orderwise.entity.enums.UserType;
 import com.example.orderwise.repository.TeamMembersRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+import static com.example.orderwise.common.config.PasswordGenerator.generatePassword;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -35,8 +38,13 @@ public class TeamMembersService implements IBaseService<TeamMembers, TeamMembers
         return modelMapper.map(teamMembersRepository.save(modelMapper.map(dto, TeamMembers.class)), TeamMembersDto.class);
     }
 
+    @Transactional
     public ResponseEntity<String> saveTeamMembers(UserDto userDto) {
-        userService.save(userDto);
+        userDto.setImage(userDto.getImage().equals("") ? null : userDto.getImage());
+        userDto.setUsername(userDto.getFirstname()+"."+userDto.getLastname());
+        userDto.setPassword(generatePassword(8));
+        userDto.setRole(Role.ADMIN);
+        userDto = userService.save(userDto);
         TeamMembersDto teamMembersDto = new TeamMembersDto();
         teamMembersDto.setAvailability(true);
         teamMembersDto.setCurrentLoad(0);
