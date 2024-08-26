@@ -47,24 +47,22 @@ public class KeycloakAdminService {
         user.setCredentials(Collections.singletonList(credential));
         user.setEnabled(true);
         UsersResource instance = getInstance().realm(appProperties.getRealm()).users();
-        if(instance.create(user).getStatus() == 201){
-            // Get the ID of the newly created user
-            String userId = instance.search(user.getUsername(), true).get(0).getId();
+        instance.create(user);
+        // Get the ID of the newly created user
+        String userId = instance.search(user.getUsername(), true).get(0).getId();
 
-            // Set user role
-            UserResource userResource = instance.get(userId);
-            if (userDto.getUserType() != null) {
-                RoleRepresentation roleRepresentation = getInstance()
-                        .realm(appProperties.getRealm())
-                        .roles()
-                        .get(userDto.getUserType().name())
-                        .toRepresentation();
-                userResource.roles().realmLevel().add(Collections.singletonList(roleRepresentation));
-            }
+        // Set user role
+        UserResource userResource = instance.get(userId);
+        if (userDto.getUserType() != null) {
+            RoleRepresentation roleRepresentation = getInstance()
+                    .realm(appProperties.getRealm())
+                    .roles()
+                    .get(userDto.getUserType().name())
+                    .toRepresentation();
+            userResource.roles().realmLevel().add(Collections.singletonList(roleRepresentation));
+        }
 
-            return userId;
-        } else
-            return null;
+        return userId;
     }
 
     public ResponseEntity<String> updateUser(String userId, UserDto userDto) {
