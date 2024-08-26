@@ -173,6 +173,26 @@ public class UserService implements IBaseService<User, UserDto> {
     }
 
     @Transactional
+    public UserDto updateAndInKeycloak(UserDto dto) {
+        Optional<User> user = userRepository.findByUsername(dto.getUsername());
+        if (user.isPresent()) {
+            keycloakAdminService.changeRole(user.get().getUserId(), user.get().getUserType().name(), dto.getUserType().name());
+            user.get().setImage(dto.getImage());
+            user.get().setFirstname(dto.getFirstname());
+            user.get().setLastname(dto.getLastname());
+            user.get().setEmail(dto.getEmail());
+            user.get().setCin(dto.getCin());
+            user.get().setTel(dto.getTel());
+            user.get().setCity(dto.getCity());
+            user.get().setGender(dto.getGender());
+            user.get().setUserType(dto.getUserType());
+            keycloakAdminService.updateUser(user.get().getUserId(), modelMapper.map(user.get(), UserDto.class));
+            return modelMapper.map(userRepository.save(modelMapper.map(user.get(), User.class)), UserDto.class);
+        } else
+            return null;
+    }
+
+    @Transactional
     public UserDto updateConfirmation(UserDto dto) {
         User user = userRepository.findByUsername(dto.getUsername())
                 .orElseThrow(() -> new BusinessException(String.format("User not found [%s]", dto.getUsername())));

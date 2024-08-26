@@ -40,8 +40,10 @@ public class TeamMembersService implements IBaseService<TeamMembers, TeamMembers
 
     @Transactional
     public ResponseEntity<String> saveTeamMembers(UserDto userDto) {
-        userDto.setImage(userDto.getImage().equals("") ? null : userDto.getImage());
-        userDto.setUsername(userDto.getFirstname()+"."+userDto.getLastname());
+        if (userDto.getImage() != null)
+            userDto.setImage(userDto.getImage().equals("") ? null : userDto.getImage());
+        if (userDto.getUsername() == null || userDto.getUsername().isEmpty())
+            userDto.setUsername(Optional.ofNullable(userDto.getFirstname()).orElse("") + "." + Optional.ofNullable(userDto.getLastname()).orElse(""));
         userDto.setPassword(generatePassword(8));
         userDto.setRole(Role.ADMIN);
         userDto = userService.save(userDto);
@@ -56,6 +58,7 @@ public class TeamMembersService implements IBaseService<TeamMembers, TeamMembers
     }
 
     @Override
+    @Transactional
     public TeamMembersDto update(TeamMembersDto dto) {
         return modelMapper.map(teamMembersRepository.save(modelMapper.map(dto, TeamMembers.class)), TeamMembersDto.class);
     }
@@ -125,5 +128,15 @@ public class TeamMembersService implements IBaseService<TeamMembers, TeamMembers
             notificationRequestBean.setTemplate("no_suitable_team_members.ftlh");
             notificationService.sendNotifications(notificationRequestBean);
         }
+    }
+
+    @Transactional
+    public TeamMembersDto updateMember(TeamMembersDto dto) {
+        UserDto userDto = userService.updateAndInKeycloak(dto.getUser());
+        dto.setUserType(userDto.getUserType());
+        if (userDto.getUserType().equals(UserType.HOLD))
+            dto.setAvailability(false);
+        dto.setFullName(userDto.getFirstname()+" "+userDto.getLastname());
+        return modelMapper.map(teamMembersRepository.save(modelMapper.map(dto, TeamMembers.class)), TeamMembersDto.class);
     }
 }

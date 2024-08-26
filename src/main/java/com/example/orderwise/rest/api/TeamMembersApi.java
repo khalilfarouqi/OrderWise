@@ -30,5 +30,7 @@ public interface TeamMembersApi {
                            @RequestParam(defaultValue = "asc") String order,
                            @RequestParam(defaultValue = "id") String sort);
     @PostMapping("/add-member")
-    ResponseEntity<String> addMember(@RequestBody UserDto userDto);
+    ResponseEntity<String> addMember(@RequestBody TeamMembersDto teamMembersDto);
+    @PutMapping("/update-member")
+    TeamMembersDto updateMember(@RequestBody TeamMembersDto teamMembersDto);
 }

@@ -49,7 +49,12 @@ public class TeamMembersController implements TeamMembersApi {
     }
 
     @Override
-    public ResponseEntity<String> addMember(UserDto userDto) {
-        return teamMembersService.saveTeamMembers(userDto);
+    public ResponseEntity<String> addMember(TeamMembersDto teamMembersDto) {
+        return teamMembersService.saveTeamMembers(teamMembersDto.getUser());
+    }
+
+    @Override
+    public TeamMembersDto updateMember(TeamMembersDto teamMembersDto) {
+        return teamMembersService.updateMember(teamMembersDto);
     }
 }
