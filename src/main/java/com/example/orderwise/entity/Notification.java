@@ -22,7 +22,7 @@ public class Notification {
 
     private Boolean notificationWeb;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private User user;
 
     @OneToOne
