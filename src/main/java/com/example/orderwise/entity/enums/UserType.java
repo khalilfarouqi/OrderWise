@@ -8,5 +8,6 @@ public enum UserType {
     DELIVERY_BOY_BY_CITY,
     CONFIRMED,
     NEW_USER,
-    REFUSER
+    REFUSER,
+    HOLD
 }
