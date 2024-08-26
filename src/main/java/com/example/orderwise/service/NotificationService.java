@@ -3,9 +3,7 @@ package com.example.orderwise.service;
 import com.example.orderwise.base.IBaseService;
 import com.example.orderwise.bean.NotificationRequestBean;
 import com.example.orderwise.common.config.JsonProperties;
-import com.example.orderwise.common.dto.MyMoneyDto;
 import com.example.orderwise.common.dto.NotificationDto;
-import com.example.orderwise.entity.MyMoney;
 import com.example.orderwise.entity.Notification;
 import com.example.orderwise.exception.BusinessException;
 import com.example.orderwise.mail.services.MailService;
@@ -36,9 +34,8 @@ public class NotificationService implements IBaseService<Notification, Notificat
 
     private final ModelMapper modelMapper;
 
-    private final JsonProperties jsonProperties;
-
     @Override
+    @Transactional
     public NotificationDto save(NotificationDto dto) {
         return modelMapper.map(notificationRepository.save(modelMapper.map(dto, Notification.class)), NotificationDto.class);
     }

@@ -20,7 +20,9 @@ import java.util.List;
 public class NotificationGroupService implements IBaseService<NotificationGroup, NotificationGroupDto> {
     private final NotificationGroupRepository notificationGroupRepository;
     private final ModelMapper modelMapper;
+
     @Override
+    @Transactional
     public NotificationGroupDto save(NotificationGroupDto dto) {
         return modelMapper.map(notificationGroupRepository.save(modelMapper.map(dto, NotificationGroup.class)), NotificationGroupDto.class);
     }
