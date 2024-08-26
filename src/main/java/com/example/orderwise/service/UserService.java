@@ -66,9 +66,11 @@ public class UserService implements IBaseService<User, UserDto> {
 
         notificationGroupDto = notificationGroupService.save(notificationGroupDto);
 
-        NotificationDto notificationDto = createNotification(notificationGroupDto, dto);
+        UserDto userDto = modelMapper.map(userRepository.save(modelMapper.map(dto, User.class)), UserDto.class);
+
+        NotificationDto notificationDto = createNotification(notificationGroupDto, userDto);
         notificationService.save(notificationDto);
-        return notificationDto.getUser();
+        return userDto;
     }
 
     @Transactional
